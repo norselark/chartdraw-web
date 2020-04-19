@@ -10,21 +10,36 @@ pub struct App {
 }
 
 #[derive(Clone, Debug, PartialEq)]
-pub struct Positions {
-    pub ascendant: f64,
-    pub descendant: f64,
-    pub sun: f64,
-    pub moon: f64,
-}
+pub struct Positions(pub [f64; 13]);
 
 impl Default for Positions {
     fn default() -> Self {
-        Self {
-            ascendant: 87.37_f64.to_radians(),
-            descendant: 306.4_f64.to_radians(),
-            sun: 292.24_f64.to_radians(),
-            moon: 242.66_f64.to_radians(),
-        }
+        Self([
+            292.24, 242.66, 271.75, 293.01, 231.33, 228.77, 272.72, 24.61, 342.18, 289.17, 135.16,
+            306.4, 87.37,
+        ])
+    }
+}
+
+impl Positions {
+    pub fn sun(&self) -> f64 {
+        self.0[0]
+    }
+    
+    pub fn moon(&self) -> f64 {
+        self.0[1]
+    }
+    
+    pub fn descendant(&self) -> f64 {
+        self.0[11]
+    }
+
+    pub fn ascendant(&self) -> f64 {
+        self.0[12]
+    }
+
+    pub fn planets(&self) -> &[f64] {
+        &self.0[0..11]
     }
 }
 

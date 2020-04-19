@@ -39,7 +39,7 @@ impl Component for HarmonicSelect {
     fn view(&self) -> Html {
         html! {
             <label>
-                { "Harmonic" }
+                { "Harmonic:" }
                 <input type="number" value=self.harmonic min=1 max=300
                     onchange=self.link.callback(|cd| Msg(cd)) />
             </label>

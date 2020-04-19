@@ -2,14 +2,19 @@ use crate::app::Positions;
 use yew::prelude::*;
 
 lazy_static! {
-    static ref NAMES: Vec<&'static str> = vec!["\u{2609}", "\u{263d}", "ASC", "MC",];
+    static ref NAMES: Vec<&'static str> = vec![
+        "\u{2609}", "\u{263d}", "\u{263f}", "\u{2640}", "\u{2642}", "\u{2643}", "\u{2644}",
+        "\u{2645}", "\u{2646}", "\u{2647}", "\u{260a}", "MC", "ASC",
+    ];
 }
+
+const NUM: usize = 13;
 
 pub struct ListView {
     link: ComponentLink<Self>,
     positions: Positions,
     angle_format: AngleFormat,
-    offset: u8,
+    offset: usize,
 }
 
 enum AngleFormat {
@@ -52,8 +57,8 @@ impl Component for ListView {
                 AngleFormat::Full => self.angle_format = AngleFormat::Truncated,
                 AngleFormat::Truncated => self.angle_format = AngleFormat::Full,
             },
-            Msg::IncOffset => self.offset = (self.offset + 1) % 4,
-            Msg::DecOffset => self.offset = (self.offset + 3) % 4,
+            Msg::IncOffset => self.offset = (self.offset + NUM - 1) % NUM,
+            Msg::DecOffset => self.offset = (self.offset + 1) % NUM,
         };
         true
     }
@@ -67,13 +72,13 @@ impl Component for ListView {
         let on_toggle = self.link.callback(|_| Msg::Toggle);
         let on_scrollup = self.link.callback(|_| Msg::DecOffset);
         let on_scrolldown = self.link.callback(|_| Msg::IncOffset);
+
+        let indices = (self.offset..NUM).chain(0..self.offset);
+        let pos_vec = self.positions.0.to_vec();
         html! {
             <div class="listview">
                 <table>
-                    { self.format_row("s", self.positions.sun) }
-                    { self.format_row("s", self.positions.moon) }
-                    { self.format_row("s", self.positions.ascendant) }
-                    { self.format_row("s", self.positions.descendant) }
+                    { for indices.map(|i| self.format_row(NAMES[i], pos_vec[i])) }
                 </table>
                 <div class="button_row">
                     <button onclick=on_scrollup>{ "\u{25b2}" }</button>
@@ -88,8 +93,8 @@ impl Component for ListView {
 impl ListView {
     fn format_row(&self, name: &str, angle: f64) -> Html {
         let text = match self.angle_format {
-            AngleFormat::Truncated => truncate_angle(angle.to_degrees()),
-            AngleFormat::Full => full_angle(angle.to_degrees()),
+            AngleFormat::Truncated => truncate_angle(angle),
+            AngleFormat::Full => full_angle(angle),
         };
         html! {
             <tr>

@@ -39,7 +39,7 @@ impl Component for CycleSelect {
     fn view(&self) -> Html {
         html! {
             <label>
-                { "Cycle" }
+                { "Turned axis:" }
                 <input type="number" value=self.cycle min=1 max=12
                     onchange=self.link.callback(|cd| Msg(cd)) />
             </label>
