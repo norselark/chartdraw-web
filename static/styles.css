@@ -1,0 +1,25 @@
+body {
+    font-family: "sans-serif";
+}
+
+p {
+    max-width: 50ex;
+}
+
+div {
+    padding: 2px;
+}
+
+.top_bar {
+    display: flex;
+    justify-content: space-between;
+}
+
+.app_container {
+    display: flex;
+    justify-content: center;
+}
+
+canvas {
+    background-color: black;
+}

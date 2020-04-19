@@ -1,16 +1,49 @@
-use web_sys;
+use std::str::FromStr;
 use yew::prelude::*;
+
+use crate::components::{BottomBar, CanvasArea, CycleSelect, HarmonicSelect, ListView, TopBar};
 
 pub struct App {
     link: ComponentLink<Self>,
-    clicked: bool,
-    number: i32,
+    harmonic_cycle: HarmonicCycle,
+    positions: Positions,
+}
+
+#[derive(Clone, Debug, PartialEq)]
+pub struct Positions {
+    pub ascendant: f64,
+    pub descendant: f64,
+    pub sun: f64,
+    pub moon: f64,
+}
+
+impl Default for Positions {
+    fn default() -> Self {
+        Self {
+            ascendant: 87.37_f64.to_radians(),
+            descendant: 306.4_f64.to_radians(),
+            sun: 292.24_f64.to_radians(),
+            moon: 242.66_f64.to_radians(),
+        }
+    }
+}
+
+#[derive(Clone, Debug, PartialEq)]
+pub enum HarmonicCycle {
+    Base,
+    Cycle(u8),
+    Harmonic(u16),
+}
+
+impl Default for HarmonicCycle {
+    fn default() -> Self {
+        Self::Base
+    }
 }
 
 pub enum Msg {
-    Click,
-    Change(i32),
-    Error(String),
+    CycleChange(u8),
+    HarmonicChange(u16),
 }
 
 impl Component for App {
@@ -20,50 +53,57 @@ impl Component for App {
     fn create(_: Self::Properties, link: ComponentLink<Self>) -> Self {
         App {
             link,
-            clicked: false,
-            number: 0,
+            harmonic_cycle: Default::default(),
+            positions: Default::default(),
         }
     }
 
     fn update(&mut self, msg: Self::Message) -> ShouldRender {
-        match msg {
-            Msg::Click => {
-                self.clicked = !self.clicked;
-                true
-            }
-            Msg::Change(num) => {
-                self.number = num;
-                true
-            }
-            Msg::Error(reason) => {
-                web_sys::console::log(reason);
-                false
-            }
-        }
+        self.harmonic_cycle = match msg {
+            Msg::CycleChange(1) => HarmonicCycle::Base,
+            Msg::HarmonicChange(1) => HarmonicCycle::Base,
+            Msg::CycleChange(cycle) => HarmonicCycle::Cycle(cycle),
+            Msg::HarmonicChange(harmonic) => HarmonicCycle::Harmonic(harmonic),
+        };
+        true
     }
 
     fn view(&self) -> Html {
-        let button_text = if self.clicked { "Eggs" } else { "Spam" };
-        let text = match self.number {
-            0 => "Tallet er null".into(),
-            _ => format!("Tallet er {}", self.number),
+        let on_harmonic_change = self
+            .link
+            .callback(|cd| Msg::HarmonicChange(try_from_change_data::<u16>(cd).unwrap()));
+        let on_cycle_change = self
+            .link
+            .callback(|cd| Msg::CycleChange(try_from_change_data::<u8>(cd).unwrap()));
+
+        let (harmonic, cycle) = match self.harmonic_cycle {
+            HarmonicCycle::Base => (1, 1),
+            HarmonicCycle::Harmonic(harm) => (harm, 1),
+            HarmonicCycle::Cycle(cycl) => (1, cycl),
         };
+
         html! {
-            <div>
-                <input type="number" onchange=self.link.callback(|e: ChangeData| {
-                    match e {
-                        ChangeData::Value(s) => {
-                            match s.parse() {
-                                Ok(num) => Msg::Change(num),
-                                Err(reason) => Msg::Error(reason.to_string())
-                            }
-                        },
-                        _ => unreachable!(),
-                    }
-                }) />
-                <button onclick=self.link.callback(|_| Msg::Click)>{button_text}</button>
-                <p>{text}</p>
+            <div class="app_container">
+                <div class="left_frame">
+                    <TopBar />
+                    <CanvasArea harmonic_cycle=&self.harmonic_cycle positions=&self.positions />
+                    <BottomBar harmonic_cycle=&self.harmonic_cycle />
+                </div>
+                <div class="right_frame">
+                    <HarmonicSelect harmonic=harmonic on_change=on_harmonic_change />
+                    <CycleSelect cycle=cycle on_change=on_cycle_change />
+                    <h3>{ "Harmonic and Cycle" }</h3>
+                    <p>{ format!("{:?}", self.harmonic_cycle ) }</p>
+                    <ListView positions=&self.positions />
+                </div>
             </div>
         }
+    }
+}
+
+fn try_from_change_data<T: FromStr>(cd: ChangeData) -> Result<T, T::Err> {
+    match cd {
+        ChangeData::Value(val) => val.parse(),
+        _ => unreachable!(),
     }
 }

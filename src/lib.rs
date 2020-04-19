@@ -1,10 +1,15 @@
-mod app;
+#![warn(clippy::pedantic)]
+#![recursion_limit="256"]
 
-use wasm_bindgen::prelude::*;
+#[macro_use]
+extern crate lazy_static;
+
+mod app;
+mod components;
+
+use wasm_bindgen::prelude::wasm_bindgen;
 
 #[wasm_bindgen]
-pub fn run_app() -> Result<(), JsValue> {
+pub fn run_app() {
     yew::start_app::<app::App>();
-
-    Ok(())
 }
