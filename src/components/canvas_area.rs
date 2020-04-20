@@ -71,17 +71,21 @@ impl Component for CanvasArea {
                     { zodiac_sectors(start_of_zodiac) }
                     { planet_markers(self.positions.planets()) }
                 </g>
-                <g transform=format!("rotate({})", cycleoffset) stroke="white">
-                    <path d="M 0.703 0 H 0.219 M -0.219 0 H -0.703 M -0.863 0 H -0.9" />
-                </g>
-                <g transform=format!("rotate({})", cycleoffset + self.positions.descendant()) stroke="white">
-                    <path d="M 0.703 0 H 0.219 M -0.219 0 H -0.703 M -0.863 0 H -0.9" />
-                </g>
                 <circle r="0.883" stroke="white" fill="transparent" />
                 <circle r="0.219" stroke="black" fill="lightseagreen" />
                 <g stroke="teal" fill="transparent">
                     <circle r="0.930" />
                     <circle r="1.043" />
+                </g>
+                // Ascendant arrow
+                <g transform=format!("rotate({})", cycleoffset) stroke="white">
+                    <path d="M 0.703 0 H 0.219 M -0.219 0 H -0.703 M -0.863 0 H -0.9" stroke="white" />
+                    <path d="M -0.9 0.01 h -0.02 l -0.03 -0.01 l 0.03 -0.01 h 0.02 z " fill="white" />
+                </g>
+                // Descendant arrow
+                <g transform=format!("rotate({})", cycleoffset + self.positions.descendant()) stroke="white">
+                    <path d="M 0.703 0 H 0.219 M -0.219 0 H -0.703 M -0.863 0 H -0.9" stroke="white" />
+                    <path d="M -0.9 0.01 h -0.02 l -0.03 -0.01 l 0.03 -0.01 h 0.02 z " stroke="white" fill="black" />
                 </g>
             </svg>
         }

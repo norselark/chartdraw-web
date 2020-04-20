@@ -6,6 +6,7 @@ extern crate lazy_static;
 
 mod app;
 mod components;
+mod input;
 
 use wasm_bindgen::prelude::wasm_bindgen;
 

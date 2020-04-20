@@ -2,6 +2,7 @@ use std::str::FromStr;
 use yew::prelude::*;
 
 use crate::components::{BottomBar, CanvasArea, CycleSelect, HarmonicSelect, ListView, TopBar};
+use crate::input;
 
 pub struct App {
     link: ComponentLink<Self>,
@@ -25,11 +26,11 @@ impl Positions {
     pub fn sun(&self) -> f64 {
         self.0[0]
     }
-    
+
     pub fn moon(&self) -> f64 {
         self.0[1]
     }
-    
+
     pub fn descendant(&self) -> f64 {
         self.0[11]
     }
@@ -57,6 +58,7 @@ impl Default for HarmonicCycle {
 }
 
 pub enum Msg {
+    Noop,
     CycleChange(u8),
     HarmonicChange(u16),
 }
@@ -79,6 +81,7 @@ impl Component for App {
             Msg::HarmonicChange(1) => HarmonicCycle::Base,
             Msg::CycleChange(cycle) => HarmonicCycle::Cycle(cycle),
             Msg::HarmonicChange(harmonic) => HarmonicCycle::Harmonic(harmonic),
+            Msg::Noop => return false,
         };
         true
     }
@@ -97,6 +100,11 @@ impl Component for App {
             HarmonicCycle::Cycle(cycl) => (1, cycl),
         };
 
+        let input_main = self.link.callback(|_| {
+            input::main();
+            Msg::Noop
+        });
+
         html! {
             <div class="app_container">
                 <div class="left_frame">
@@ -107,10 +115,11 @@ impl Component for App {
                 <div class="right_frame">
                     <HarmonicSelect harmonic=harmonic on_change=on_harmonic_change />
                     <CycleSelect cycle=cycle on_change=on_cycle_change />
-                    <h3>{ "Harmonic and Cycle" }</h3>
+                    <h3>{ "Harmonic und Cycle" }</h3>
                     <p>{ format!("{:?}", self.harmonic_cycle ) }</p>
                     <ListView positions=&self.positions />
                 </div>
+                <button onclick=input_main>{ "Test" }</button>
             </div>
         }
     }

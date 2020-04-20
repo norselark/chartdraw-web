@@ -1,7 +1,7 @@
 [package]
-name = "yew-test"
+name = "yew-chartdraw"
 version = "0.1.0"
-authors = ["Stig Johan Berggren <stigjb@gmail.com>"]
+authors = ["Norselark <norselark@vivaldi.net>"]
 edition = "2018"
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
@@ -18,3 +18,4 @@ web-sys = { version = "0.3.37", features = [
 wasm-bindgen = "0.2.60"
 itertools = "0.9.0"
 lazy_static = "1.4.0"
+regex = "1.3.7"
