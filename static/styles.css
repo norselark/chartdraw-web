@@ -1,5 +1,6 @@
 body {
     font-family: "sans-serif";
+    font-size: medium;
 }
 
 p {
@@ -16,10 +17,21 @@ div {
 }
 
 .app_container {
-    display: flex;
-    justify-content: center;
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    grid-gap: 40px;
+}
+
+.text-input {
+    grid-column-start: 1;
+    grid-column-end: 3;
 }
 
 canvas {
     background-color: black;
+}
+
+.error {
+    color: red;
+    font-weight: bold;
 }

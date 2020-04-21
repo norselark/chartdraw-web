@@ -1,8 +1,7 @@
-use regex::Regex;
 use crate::app::Positions;
+use regex::Regex;
 
-const CONTENTS: &str = r#"
-Sun     	22°14'35.78"Cap	  1° 1' 9"	IX
+pub const CONTENTS: &str = r#"Sun     	22°14'35.78"Cap	  1° 1' 9"	IX
 Moon    	 2°39'38.96"Sgr	 11°57'25"	VI
 Mercury 	 1°45'01.32"Cap	  1°21'23"	VII
 Venus   	23°00'48.61"Cap	  1°15'28"	IX
@@ -38,19 +37,36 @@ struct MatchLine<'a> {
 }
 
 lazy_static! {
-    static ref ZET9: Regex = Regex::new(r#"(\w+)\s+(\d+)°(\d+)'(\d+\.\d+)"(\w+)"#).unwrap();
+    /// A pattern to match lines from ZET9's export format
+    static ref ZET9_PAT: Regex = Regex::new(r#"(\w+)\s+(\d+)°(\d+)'(\d+\.\d+)"(\w+)"#).unwrap();
 }
 
-fn to_num(ml: &MatchLine) -> f64 {
+/// The abbreviated zodiac names used by ZET9
+const ZET9_ZODIAC: [&str; 12] = [
+    "Ari", "Tau", "Gem", "Cnc", "Leo", "Vir", "Lib", "Sco", "Sgr", "Cap", "Aqr", "Psc",
+];
+
+#[derive(Debug)]
+pub enum Error {
+    UnknownZodiacSign(String),
+}
+
+fn to_num(ml: &MatchLine) -> Result<f64, Error> {
+    let zodiac_idx = ZET9_ZODIAC
+        .iter()
+        .position(|&e| e == ml.sign)
+        .ok_or(Error::UnknownZodiacSign(ml.sign.to_string()))? as f64;
+    // These are matched as digit sequences and should always parse successfully
     let deg: f64 = ml.degrees.parse().unwrap();
     let min: f64 = ml.minutes.parse().unwrap();
     let sec: f64 = ml.seconds.parse().unwrap();
-    deg + (min / 60.) + (sec / 3600.)
+    Ok(30. * zodiac_idx + deg + (min / 60.) + (sec / 3600.))
 }
 
-fn parse_zet9(text: &str) -> Result<Positions, &'static str> {
+pub fn parse_zet9(text: &str) -> Result<Positions, Error> {
     let mut positions = Positions::default();
-    for caps in ZET9.captures_iter(text) {
+    for caps in ZET9_PAT.captures_iter(text) {
+        // All groups must be present for caps to exist
         let ml = MatchLine {
             name: caps.get(1).unwrap().as_str(),
             degrees: caps.get(2).unwrap().as_str(),
@@ -58,21 +74,24 @@ fn parse_zet9(text: &str) -> Result<Positions, &'static str> {
             seconds: caps.get(4).unwrap().as_str(),
             sign: caps.get(5).unwrap().as_str(),
         };
-        let position = to_num(&ml);
+        let mut set_position = |i: usize| {
+            positions.0[i] = to_num(&ml)?;
+            Ok(())
+        };
         match ml.name {
-            "Sun" => positions.0[0] = position,
-            "Moon" => positions.0[1] = position,
-            "Mercury" => positions.0[2] = position,
-            "Venus" => positions.0[3] = position,
-            "Mars" => positions.0[4] = position,
-            "Jupiter" => positions.0[5] = position,
-            "Saturn" => positions.0[6] = position,
-            "Uranus" => positions.0[7] = position,
-            "Neptune" => positions.0[8] = position,
-            "Pluto" => positions.0[9] = position,
-            "Node" => positions.0[10] = position,
-            "X" => positions.0[11] = position,
-            "I" => positions.0[12] = position,
+            "Sun" => set_position(0)?,
+            "Moon" => set_position(1)?,
+            "Mercury" => set_position(2)?,
+            "Venus" => set_position(3)?,
+            "Mars" => set_position(4)?,
+            "Jupiter" => set_position(5)?,
+            "Saturn" => set_position(6)?,
+            "Uranus" => set_position(7)?,
+            "Neptune" => set_position(8)?,
+            "Pluto" => set_position(9)?,
+            "Node" => set_position(10)?,
+            "X" => set_position(11)?,
+            "I" => set_position(12)?,
             _ => (),
         }
     }

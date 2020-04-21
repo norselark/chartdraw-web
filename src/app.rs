@@ -1,13 +1,16 @@
 use std::str::FromStr;
 use yew::prelude::*;
 
-use crate::components::{BottomBar, CanvasArea, CycleSelect, HarmonicSelect, ListView, TopBar};
+use crate::components::{
+    BottomBar, CanvasArea, CycleSelect, HarmonicSelect, ListView, TextInput, TopBar,
+};
 use crate::input;
 
 pub struct App {
     link: ComponentLink<Self>,
     harmonic_cycle: HarmonicCycle,
     positions: Positions,
+    text: String,
 }
 
 #[derive(Clone, Debug, PartialEq)]
@@ -15,10 +18,7 @@ pub struct Positions(pub [f64; 13]);
 
 impl Default for Positions {
     fn default() -> Self {
-        Self([
-            292.24, 242.66, 271.75, 293.01, 231.33, 228.77, 272.72, 24.61, 342.18, 289.17, 135.16,
-            306.4, 87.37,
-        ])
+        Self([0.; 13])
     }
 }
 
@@ -61,6 +61,7 @@ pub enum Msg {
     Noop,
     CycleChange(u8),
     HarmonicChange(u16),
+    NewPositions(Positions),
 }
 
 impl Component for App {
@@ -72,17 +73,21 @@ impl Component for App {
             link,
             harmonic_cycle: Default::default(),
             positions: Default::default(),
+            text: String::new(),
         }
     }
 
     fn update(&mut self, msg: Self::Message) -> ShouldRender {
-        self.harmonic_cycle = match msg {
-            Msg::CycleChange(1) => HarmonicCycle::Base,
-            Msg::HarmonicChange(1) => HarmonicCycle::Base,
-            Msg::CycleChange(cycle) => HarmonicCycle::Cycle(cycle),
-            Msg::HarmonicChange(harmonic) => HarmonicCycle::Harmonic(harmonic),
+        match msg {
+            Msg::CycleChange(1) => self.harmonic_cycle = HarmonicCycle::Base,
+            Msg::HarmonicChange(1) => self.harmonic_cycle = HarmonicCycle::Base,
+            Msg::CycleChange(cycle) => self.harmonic_cycle = HarmonicCycle::Cycle(cycle),
+            Msg::HarmonicChange(harmonic) => {
+                self.harmonic_cycle = HarmonicCycle::Harmonic(harmonic)
+            }
             Msg::Noop => return false,
-        };
+            Msg::NewPositions(positions) => self.positions = positions,
+        }
         true
     }
 
@@ -93,17 +98,13 @@ impl Component for App {
         let on_cycle_change = self
             .link
             .callback(|cd| Msg::CycleChange(try_from_change_data::<u8>(cd).unwrap()));
+        let on_positions_change = self.link.callback(|pos: Positions| Msg::NewPositions(pos));
 
         let (harmonic, cycle) = match self.harmonic_cycle {
             HarmonicCycle::Base => (1, 1),
             HarmonicCycle::Harmonic(harm) => (harm, 1),
             HarmonicCycle::Cycle(cycl) => (1, cycl),
         };
-
-        let input_main = self.link.callback(|_| {
-            input::main();
-            Msg::Noop
-        });
 
         html! {
             <div class="app_container">
@@ -119,7 +120,7 @@ impl Component for App {
                     <p>{ format!("{:?}", self.harmonic_cycle ) }</p>
                     <ListView positions=&self.positions />
                 </div>
-                <button onclick=input_main>{ "Test" }</button>
+                <TextInput on_change=on_positions_change />
             </div>
         }
     }
