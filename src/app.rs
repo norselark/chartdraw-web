@@ -103,11 +103,13 @@ impl Component for App {
             HarmonicCycle::Cycle(cycl) => (1, cycl),
         };
 
+        let drawing_positions = harmonics(&self.positions, harmonic);
+
         html! {
             <div class="app_container">
                 <div class="left_frame">
                     <TopBar />
-                    <CanvasArea harmonic_cycle=&self.harmonic_cycle positions=&self.positions />
+                    <CanvasArea harmonic_cycle=&self.harmonic_cycle positions=&drawing_positions />
                     <BottomBar harmonic_cycle=&self.harmonic_cycle />
                 </div>
                 <div class="right_frame">
@@ -126,4 +128,12 @@ fn try_from_change_data<T: FromStr>(cd: ChangeData) -> Result<T, T::Err> {
         ChangeData::Value(val) => val.parse(),
         _ => unreachable!(),
     }
+}
+
+fn harmonics(positions: &Positions, harmonic: u16) -> Positions {
+    let mut new_positions: [f64; 13] = [0.; 13];
+    for (i, pos) in positions.0.iter().enumerate() {
+        new_positions[i] = (pos * harmonic as f64) % 360.
+    }
+    Positions(new_positions)
 }
