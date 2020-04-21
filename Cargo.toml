@@ -10,11 +10,7 @@ crate-type = ["cdylib"]
 
 [dependencies]
 yew = { version = "0.14.3", features = ["web_sys"] }
-js-sys = "*"
-web-sys = { version = "0.3.37", features = [
-    "HtmlCanvasElement",
-    "CanvasRenderingContext2d",
-] }
+web-sys = "0.3.37"
 wasm-bindgen = "0.2.60"
 itertools = "0.9.0"
 lazy_static = "1.4.0"

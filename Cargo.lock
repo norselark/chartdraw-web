@@ -560,7 +560,6 @@ name = "yew-chartdraw"
 version = "0.1.0"
 dependencies = [
  "itertools",
- "js-sys",
  "lazy_static",
  "regex",
  "wasm-bindgen",
