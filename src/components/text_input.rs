@@ -46,13 +46,13 @@ impl Component for TextInput {
                     self.error = Some(detail);
                 }
             },
-            Msg::FillDefault => self.text = input::CONTENTS.to_string(),
+            Msg::FillDefault => self.text = input::SAMPLE.to_string(),
         };
         true
     }
 
-    fn change(&mut self, props: Self::Properties) -> ShouldRender {
-        true
+    fn change(&mut self, _props: Self::Properties) -> ShouldRender {
+        false
     }
 
     fn view(&self) -> Html {

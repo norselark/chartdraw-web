@@ -1,7 +1,7 @@
 use crate::app::Positions;
 use regex::Regex;
 
-pub const CONTENTS: &str = r#"Sun     	22°14'35.78"Cap	  1° 1' 9"	IX
+pub const SAMPLE: &str = r#"Sun     	22°14'35.78"Cap	  1° 1' 9"	IX
 Moon    	 2°39'38.96"Sgr	 11°57'25"	VI
 Mercury 	 1°45'01.32"Cap	  1°21'23"	VII
 Venus   	23°00'48.61"Cap	  1°15'28"	IX
@@ -96,11 +96,4 @@ pub fn parse_zet9(text: &str) -> Result<Positions, Error> {
         }
     }
     Ok(positions)
-}
-
-pub fn main() {
-    let positions = parse_zet9(CONTENTS);
-    if let Ok(p) = positions {
-        web_sys::console::log_1(&format!("{:?}", p).into());
-    }
 }

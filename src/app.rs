@@ -4,13 +4,11 @@ use yew::prelude::*;
 use crate::components::{
     BottomBar, CanvasArea, CycleSelect, HarmonicSelect, ListView, TextInput, TopBar,
 };
-use crate::input;
 
 pub struct App {
     link: ComponentLink<Self>,
     harmonic_cycle: HarmonicCycle,
     positions: Positions,
-    text: String,
 }
 
 #[derive(Clone, Debug, PartialEq)]
@@ -73,7 +71,6 @@ impl Component for App {
             link,
             harmonic_cycle: Default::default(),
             positions: Default::default(),
-            text: String::new(),
         }
     }
 
@@ -116,8 +113,6 @@ impl Component for App {
                 <div class="right_frame">
                     <HarmonicSelect harmonic=harmonic on_change=on_harmonic_change />
                     <CycleSelect cycle=cycle on_change=on_cycle_change />
-                    <h3>{ "Harmonic und Cycle" }</h3>
-                    <p>{ format!("{:?}", self.harmonic_cycle ) }</p>
                     <ListView positions=&self.positions />
                 </div>
                 <TextInput on_change=on_positions_change />

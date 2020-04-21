@@ -1,11 +1,12 @@
 use yew::prelude::*;
 
 use crate::app::{HarmonicCycle, Positions};
+use crate::optimize;
 
-lazy_static! {
-    static ref ZODIAC_GLYPHS: Vec<&'static str> =
-        vec!["♈", "♉", "♊", "♋", "♌", "♍", "♎", "♏", "♐", "♑", "♒", "♓",];
-}
+const ZODIAC_GLYPHS: [char; 12] = [
+    '♈', '♉', '♊', '♋', '♌', '♍', '♎', '♏', '♐', '♑', '♒', '♓',
+];
+const PLANET_GLYPHS: [char; 11] = ['☉', '☽', '☿', '♀', '♂', '♃', '♄', '♅', '♆', '♇', '☊'];
 
 pub struct CanvasArea {
     // link: ComponentLink<Self>,
@@ -59,21 +60,20 @@ impl Component for CanvasArea {
                 font-size="12"
             >
                 <rect x="-1" y="-1" width="2" height="2" fill="black" />
-                <circle r="0.863" stroke="white" fill="lightseagreen" />
-                <circle r="0.703" stroke="white" fill="lightblue" />
+                <circle r="0.863" stroke="white" fill="#55ffff" />
+                <circle r="0.703" stroke="white" fill="#5555ff" />
                 { house_sectors() }
                 // Blue semicircle under horizon
                 <g transform=format!("rotate({})", cycleoffset)>
-                    <path d="M -0.703 0 A 0.5 0.5 0 0 0 0.703 0" fill="blue" stroke="white" />
+                    <path d="M -0.703 0 A 0.5 0.5 0 0 0 0.703 0" fill="#0000aa" stroke="white" />
                 </g>
                 <g transform=format!("rotate({})", -start_of_zodiac)>
                     { five_deg_lines() }
                     { zodiac_sectors(start_of_zodiac) }
-                    { planet_markers(self.positions.planets()) }
+                    { planet_markers(self.positions.planets(), start_of_zodiac) }
                 </g>
                 <circle r="0.883" stroke="white" fill="transparent" />
-                <circle r="0.219" stroke="black" fill="lightseagreen" />
-                <g stroke="teal" fill="transparent">
+                <g stroke="#00aaaa" fill="transparent">
                     <circle r="0.930" />
                     <circle r="1.043" />
                 </g>
@@ -87,6 +87,8 @@ impl Component for CanvasArea {
                     <path d="M 0.703 0 H 0.219 M -0.219 0 H -0.703 M -0.863 0 H -0.9" stroke="white" />
                     <path d="M -0.9 0.01 h -0.02 l -0.03 -0.01 l 0.03 -0.01 h 0.02 z " stroke="white" fill="black" />
                 </g>
+                // Centre disk
+                <circle r="0.219" stroke="black" fill="#55ffff" />
             </svg>
         }
     }
@@ -130,8 +132,8 @@ fn zodiac_sectors(start_of_zodiac: f64) -> Html {
         let glyph = ZODIAC_GLYPHS[offset];
         html! {
             <g transform=rotation>
-                <path d="M 0.930 0 L 1.043 0" stroke="teal" />
-                <text fill="teal" transform=text_trans>
+                <path d="M 0.930 0 L 1.043 0" stroke="#00aaaa" />
+                <text fill="#00aaaa" transform=text_trans>
                     { glyph }
                 </text>
             </g>
@@ -142,15 +144,24 @@ fn zodiac_sectors(start_of_zodiac: f64) -> Html {
     }
 }
 
-fn planet_markers(positions: &[f64]) -> Html {
+fn planet_markers(positions: &[f64], start_of_zodiac: f64) -> Html {
+    let optimized_position = optimize::optimize(positions);
     html! {
         <g>
-            { for positions.iter().map(|a| html! {
-                <g transform=format!("rotate({})", -a) stroke-width="0.005">
-                    <circle cx="0.684" r="0.012" stroke="white" fill="transparent" />
-                    <circle cx="0.902" r="0.015" fill="white" />
-                </g>
+            { for positions.iter().enumerate().map(|(i, a)| {
+                let delta = optimized_position[i] - a;
+                let text_trans = format!("rotate({}) translate(0.775, 0) rotate({}) scale(0.008)", -delta, a + delta + start_of_zodiac);
+                let glyph = PLANET_GLYPHS[i];
+                html! {
+                    <g transform=format!("rotate({})", -a) stroke-width="0.005">
+                        <circle cx="0.684" r="0.012" stroke="white" fill="transparent" />
+                        <circle cx="0.902" r="0.015" fill="white" />
+                        <text fill="black" transform=text_trans>
+                            { glyph }
+                        </text>
+                    </g>
+                }
             } ) }
-        </g>        
+        </g>
     }
 }

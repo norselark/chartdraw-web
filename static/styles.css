@@ -1,6 +1,7 @@
 body {
     font-family: "sans-serif";
     font-size: medium;
+    background: #eeeeee;
 }
 
 p {
@@ -20,6 +21,12 @@ div {
     display: grid;
     grid-template-columns: repeat(2, 1fr);
     grid-gap: 40px;
+}
+
+.right_frame {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-around;
 }
 
 .text-input {
