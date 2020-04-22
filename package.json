@@ -3,10 +3,9 @@
   "name": "yew-chartdraw",
   "version": "0.1.0",
   "scripts": {
-    "build": "rimraf dist pkg && webpack",
+    "build": "webpack -p",
     "dev": "rimraf dist pkg && webpack-dev-server --open -d",
     "start": "node server.js",
-    "heroku-postbuild": "webpack -p",
     "test": "cargo test && wasm-pack test --headless"
   },
   "devDependencies": {
@@ -16,5 +15,8 @@
     "webpack-cli": "^3.3.3",
     "webpack-dev-server": "^3.7.1",
     "rimraf": "^3.0.0"
+  },
+  "dependencies": {
+    "express": "^4.17.1"
   }
 }
