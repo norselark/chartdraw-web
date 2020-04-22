@@ -4,7 +4,9 @@
   "version": "0.1.0",
   "scripts": {
     "build": "rimraf dist pkg && webpack",
-    "start": "rimraf dist pkg && webpack-dev-server --open -d",
+    "dev": "rimraf dist pkg && webpack-dev-server --open -d",
+    "start": "node server.js",
+    "heroku-postbuild": "webpack -p",
     "test": "cargo test && wasm-pack test --headless"
   },
   "devDependencies": {
