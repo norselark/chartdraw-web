@@ -1,5 +1,0 @@
-#!/bin/sh
-
-wasm-pack build --dev --target web \
-  && rollup ./main.js --format iife --file ./pkg/bundle.js \
-  && python3 -m http.server
