@@ -1,1 +1,1 @@
-web: ./build_and_serve
+web: npm start

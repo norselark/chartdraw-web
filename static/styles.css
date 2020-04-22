@@ -26,7 +26,8 @@ div {
 .right_frame {
     display: flex;
     flex-direction: column;
-    justify-content: space-around;
+    justify-content: center;
+    align-items: center;
 }
 
 .text-input {
@@ -41,4 +42,16 @@ canvas {
 .error {
     color: red;
     font-weight: bold;
+}
+
+tr:nth-child(even) {
+    background: #eeeeee;
+}
+
+tr:nth-child(odd) {
+    background: #ffffff;
+}
+
+table {
+    width: 100%
 }

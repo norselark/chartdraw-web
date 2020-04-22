@@ -121,8 +121,8 @@ impl CanvasArea {
                     <path d="M -0.219 0 H 0.219 " />
                     <path d="M -0.219 0.01 h -0.02 l -0.03 -0.01 l 0.03 -0.01 h 0.02 z " fill="black" />
                 </g>
-                <circle cx=0.16 r=0.02 stroke="black" fill="yellow" transform=sun_transform />
-                <circle cx=0.16 r=0.02 stroke="black" fill="lightgrey" transform=moon_transform />
+                <circle cx=0.16 r=0.014 stroke="black" fill="yellow" transform=sun_transform />
+                <circle cx=0.16 r=0.014 stroke="black" fill="lightgrey" transform=moon_transform />
                 <circle r="0.03" stroke="black" fill="#55ffff" />
             </>
         }
