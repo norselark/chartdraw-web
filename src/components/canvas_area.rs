@@ -12,6 +12,7 @@ pub struct CanvasArea {
     // link: ComponentLink<Self>,
     harmonic_cycle: HarmonicCycle,
     positions: Positions,
+    start_of_zodiac: f64,
 }
 
 #[derive(Clone, PartialEq, Properties)]
@@ -25,16 +26,19 @@ impl Component for CanvasArea {
     type Properties = Props;
 
     fn create(props: Self::Properties, _link: ComponentLink<Self>) -> Self {
+        let start_of_zodiac = (180. - props.positions.ascendant()) % 360.;
         Self {
             // link,
             harmonic_cycle: props.harmonic_cycle,
             positions: props.positions,
+            start_of_zodiac,
         }
     }
 
     fn change(&mut self, props: Self::Properties) -> ShouldRender {
         self.harmonic_cycle = props.harmonic_cycle;
         self.positions = props.positions;
+        self.start_of_zodiac = (180. - self.positions.ascendant()) % 360.;
         true
     }
 
@@ -48,14 +52,14 @@ impl Component for CanvasArea {
                 HarmonicCycle::Cycle(n) => n as f64 - 1.,
                 _ => 0.,
             };
-        let start_of_zodiac = self.positions.ascendant() - cycleoffset;
+        let start_of_zodiac = self.start_of_zodiac - cycleoffset;
 
         html! {
             <svg
                 version="1.1" baseProfile="full"
                 width="512" height="512"
                 xmlns="http://www.w3.org/2000/svg"
-                viewBox="-1 -1 2 2" stroke-width="0.01"
+                viewBox="-1 -1 2 2" stroke-width="0.006"
                 text-anchor="middle" dominant-baseline="central"
                 font-size="12"
             >
@@ -65,7 +69,7 @@ impl Component for CanvasArea {
                 { house_sectors() }
                 // Blue semicircle under horizon
                 <g transform=format!("rotate({})", cycleoffset)>
-                    <path d="M -0.703 0 A 0.5 0.5 0 0 0 0.703 0" fill="#0000aa" stroke="white" />
+                    <path d="M -0.703 0 A 0.703 0.703 0 0 0 0.703 0" fill="#0000aa" stroke="white" />
                 </g>
                 <g transform=format!("rotate({})", -start_of_zodiac)>
                     { five_deg_lines() }
@@ -88,8 +92,39 @@ impl Component for CanvasArea {
                     <path d="M -0.9 0.01 h -0.02 l -0.03 -0.01 l 0.03 -0.01 h 0.02 z " stroke="white" fill="black" />
                 </g>
                 // Centre disk
-                <circle r="0.219" stroke="black" fill="#55ffff" />
+                {
+                    if let HarmonicCycle::Cycle(_) = self.harmonic_cycle {
+                        self.mini_horizon()
+                    } else {
+                        html! { <>
+                            <circle r="0.219" stroke="black" fill="#55ffff" />
+                            <circle r="0.006" fill="black" />
+                        </> }
+                    }
+                }
             </svg>
+        }
+    }
+}
+
+impl CanvasArea {
+    fn mini_horizon(&self) -> Html {
+        let sun_transform = format!("rotate({})", -self.start_of_zodiac - self.positions.sun());
+        let moon_transform = format!("rotate({})", -self.start_of_zodiac - self.positions.moon());
+        html! {
+            <>
+                <circle r="0.219" stroke="white" fill="#5555ff" />
+                <path d="M -0.219 0 A 0.219 0.219 0 0 0 0.219 0" fill="#0000aa" stroke="white" />
+                <path d="M -0.219 0 H 0.219 " stroke="white" />
+                <path d="M -0.219 0.01 h -0.02 l -0.03 -0.01 l 0.03 -0.01 h 0.02 z " stroke="white" fill="white" />
+                <g transform=format!("rotate({})", self.positions.descendant()) stroke="white">
+                    <path d="M -0.219 0 H 0.219 " />
+                    <path d="M -0.219 0.01 h -0.02 l -0.03 -0.01 l 0.03 -0.01 h 0.02 z " fill="black" />
+                </g>
+                <circle cx=0.16 r=0.02 stroke="black" fill="yellow" transform=sun_transform />
+                <circle cx=0.16 r=0.02 stroke="black" fill="lightgrey" transform=moon_transform />
+                <circle r="0.03" stroke="black" fill="#55ffff" />
+            </>
         }
     }
 }

@@ -42,9 +42,7 @@ fn is_sorted(a: f64, b: f64) -> bool {
     (b - a) % 360. == dist(a, b)
 }
 
-// def total_loss(angles: Sequence[float], targets: Sequence[float]) -> float:
-//     assert len(angles) == len(targets)
-//     return overlap_loss(angles) + deviation_loss(angles, targets)
+#[allow(unused)]
 fn total_loss(angles: &[f64], targets: &[f64]) -> f64 {
     assert!(angles.len() == targets.len());
     overlap_loss(angles) + deviation_loss(angles, targets)

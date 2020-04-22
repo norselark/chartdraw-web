@@ -91,10 +91,10 @@ impl Component for App {
     fn view(&self) -> Html {
         let on_harmonic_change = self
             .link
-            .callback(|cd| Msg::HarmonicChange(try_from_change_data::<u16>(cd).unwrap()));
+            .callback(|h| Msg::HarmonicChange(h));
         let on_cycle_change = self
             .link
-            .callback(|cd| Msg::CycleChange(try_from_change_data::<u8>(cd).unwrap()));
+            .callback(|c| Msg::CycleChange(c));
         let on_positions_change = self.link.callback(|pos: Positions| Msg::NewPositions(pos));
 
         let (harmonic, cycle) = match self.harmonic_cycle {
@@ -123,7 +123,7 @@ impl Component for App {
     }
 }
 
-fn try_from_change_data<T: FromStr>(cd: ChangeData) -> Result<T, T::Err> {
+pub fn try_from_change_data<T: FromStr>(cd: ChangeData) -> Result<T, T::Err> {
     match cd {
         ChangeData::Value(val) => val.parse(),
         _ => unreachable!(),
