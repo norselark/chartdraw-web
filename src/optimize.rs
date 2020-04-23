@@ -39,7 +39,7 @@ fn deviation_gradient(angle: f64, target: f64) -> f64 {
 }
 
 fn is_sorted(a: f64, b: f64) -> bool {
-    (b - a) % 360. == dist(a, b)
+    ((b - a) % 360. - dist(a, b)).abs() < std::f64::EPSILON
 }
 
 #[allow(unused)]

@@ -1,5 +1,11 @@
 #![warn(clippy::pedantic)]
-#![recursion_limit="512"]
+#![allow(
+    clippy::cast_possible_truncation,
+    clippy::cast_precision_loss,
+    clippy::cast_sign_loss,
+    clippy::non_ascii_literal
+)]
+#![recursion_limit = "512"]
 
 #[macro_use]
 extern crate lazy_static;

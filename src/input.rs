@@ -55,7 +55,7 @@ fn to_num(ml: &MatchLine) -> Result<f64, Error> {
     let zodiac_idx = ZET9_ZODIAC
         .iter()
         .position(|&e| e == ml.sign)
-        .ok_or(Error::UnknownZodiacSign(ml.sign.to_string()))? as f64;
+        .ok_or_else(|| Error::UnknownZodiacSign(ml.sign.to_string()))? as f64;
     // These are matched as digit sequences and should always parse successfully
     let deg: f64 = ml.degrees.parse().unwrap();
     let min: f64 = ml.minutes.parse().unwrap();

@@ -49,7 +49,7 @@ impl Component for CanvasArea {
     fn view(&self) -> Html {
         let cycleoffset = 30.
             * match self.harmonic_cycle {
-                HarmonicCycle::Cycle(n) => n as f64 - 1.,
+                HarmonicCycle::Cycle(n) => f64::from(n) - 1.,
                 _ => 0.,
             };
         let start_of_zodiac = self.start_of_zodiac - cycleoffset;
@@ -127,6 +127,12 @@ impl CanvasArea {
             </>
         }
     }
+
+    fn aspects(&self) -> Html {
+        html! {
+            <circle r="0.656" fill="white" />
+        }
+    }
 }
 
 fn house_sectors() -> Html {
@@ -155,7 +161,7 @@ fn five_deg_lines() -> Html {
     }
 }
 
-/// start_of_zodiac is passed in order to flip the glyphs right side up
+/// `start_of_zodiac` is passed in order to flip the glyphs right side up
 fn zodiac_sectors(start_of_zodiac: f64) -> Html {
     let sector = |offset| {
         let angle = (30 * offset) as f64;

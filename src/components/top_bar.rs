@@ -1,5 +1,5 @@
-use yew::prelude::*;
 use itertools::Itertools;
+use yew::prelude::*;
 
 pub struct TopBar {
     left_text: Vec<String>,
@@ -11,8 +11,11 @@ impl Component for TopBar {
     type Properties = ();
 
     fn create(_props: Self::Properties, _link: ComponentLink<Self>) -> Self {
-        Self { 
-            left_text: "Tropical Zodiac\nEqual Houses\nQuadrants".lines().map(String::from).collect(),
+        Self {
+            left_text: "Tropical Zodiac\nEqual Houses\nQuadrants"
+                .lines()
+                .map(String::from)
+                .collect(),
             right_text: "DRAW\nzh 2\nZET9".lines().map(String::from).collect(),
         }
     }

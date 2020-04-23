@@ -69,15 +69,16 @@ impl Component for App {
     fn create(_: Self::Properties, link: ComponentLink<Self>) -> Self {
         App {
             link,
-            harmonic_cycle: Default::default(),
-            positions: Default::default(),
+            harmonic_cycle: HarmonicCycle::default(),
+            positions: Positions::default(),
         }
     }
 
     fn update(&mut self, msg: Self::Message) -> ShouldRender {
         match msg {
-            Msg::CycleChange(1) => self.harmonic_cycle = HarmonicCycle::Base,
-            Msg::HarmonicChange(1) => self.harmonic_cycle = HarmonicCycle::Base,
+            Msg::CycleChange(1) | Msg::HarmonicChange(1) => {
+                self.harmonic_cycle = HarmonicCycle::Base
+            }
             Msg::CycleChange(cycle) => self.harmonic_cycle = HarmonicCycle::Cycle(cycle),
             Msg::HarmonicChange(harmonic) => {
                 self.harmonic_cycle = HarmonicCycle::Harmonic(harmonic)
@@ -89,13 +90,9 @@ impl Component for App {
     }
 
     fn view(&self) -> Html {
-        let on_harmonic_change = self
-            .link
-            .callback(|h| Msg::HarmonicChange(h));
-        let on_cycle_change = self
-            .link
-            .callback(|c| Msg::CycleChange(c));
-        let on_positions_change = self.link.callback(|pos: Positions| Msg::NewPositions(pos));
+        let on_harmonic_change = self.link.callback(Msg::HarmonicChange);
+        let on_cycle_change = self.link.callback(Msg::CycleChange);
+        let on_positions_change = self.link.callback(Msg::NewPositions);
 
         let (harmonic, cycle) = match self.harmonic_cycle {
             HarmonicCycle::Base => (1, 1),
@@ -133,7 +130,7 @@ pub fn try_from_change_data<T: FromStr>(cd: ChangeData) -> Result<T, T::Err> {
 fn harmonics(positions: &Positions, harmonic: u16) -> Positions {
     let mut new_positions: [f64; 13] = [0.; 13];
     for (i, pos) in positions.0.iter().enumerate() {
-        new_positions[i] = (pos * harmonic as f64) % 360.
+        new_positions[i] = (pos * f64::from(harmonic)) % 360.
     }
     Positions(new_positions)
 }

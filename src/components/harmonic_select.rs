@@ -1,6 +1,6 @@
-use yew::prelude::*;
 use crate::app::try_from_change_data;
 use std::num::ParseIntError;
+use yew::prelude::*;
 
 pub struct HarmonicSelect {
     link: ComponentLink<Self>,
@@ -38,7 +38,7 @@ impl Component for HarmonicSelect {
                     self.on_change.emit(v);
                 }
                 Err(detail) => self.error = detail.into(),
-            }
+            },
         };
         true
     }

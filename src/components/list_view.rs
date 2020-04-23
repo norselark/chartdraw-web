@@ -111,7 +111,7 @@ fn truncate_angle(angle: f64) -> String {
     let decimal_part: f64 = angle - int_part;
     let zodiac_sign = ZODIAC_SIGNS[int_part as usize / 30];
     let mut i = (decimal_part * 60.).round();
-    int_part = int_part % 30.;
+    int_part %= 30.;
     if i > 59. {
         i -= 60.;
         int_part += 1.;
