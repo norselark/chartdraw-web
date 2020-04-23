@@ -93,9 +93,9 @@ impl Component for CanvasArea {
                     <path d="M -0.9 0.01 h -0.02 l -0.03 -0.01 l 0.03 -0.01 h 0.02 z " fill="white" />
                 </g>
                 // Descendant arrow
-                <g transform=format!("rotate({})", cycleoffset + self.positions.descendant()) stroke="white">
-                    <path d="M 0.703 0 H 0.219 M -0.219 0 H -0.703 M -0.863 0 H -0.9" stroke="white" />
-                    <path d="M -0.9 0.01 h -0.02 l -0.03 -0.01 l 0.03 -0.01 h 0.02 z " stroke="white" fill="black" />
+                <g transform=format!("rotate({})", -start_of_zodiac - self.positions.descendant()) stroke="white">
+                    <path d="M 0.703 0 H 0.219 M -0.219 0 H -0.703 M 0.863 0 H 0.9" stroke="white" />
+                    <path d="M 0.9 0.01 h 0.02 l 0.03 -0.01 l -0.03 -0.01 h -0.02 z " stroke="white" fill="black" />
                 </g>
                 // Centre disk
                 {
@@ -130,9 +130,9 @@ impl CanvasArea {
                 <path d="M -0.219 0 A 0.219 0.219 0 0 0 0.219 0" fill="#0000aa" stroke="white" />
                 <path d="M -0.219 0 H 0.219 " stroke="white" />
                 <path d="M -0.219 0.01 h -0.02 l -0.03 -0.01 l 0.03 -0.01 h 0.02 z " stroke="white" fill="white" />
-                <g transform=format!("rotate({})", self.positions.descendant()) stroke="white">
+                <g transform=format!("rotate({})", -self.start_of_zodiac - self.positions.descendant()) stroke="white">
                     <path d="M -0.219 0 H 0.219 " />
-                    <path d="M -0.219 0.01 h -0.02 l -0.03 -0.01 l 0.03 -0.01 h 0.02 z " fill="black" />
+                    <path d="M 0.219 0.01 h 0.02 l 0.03 -0.01 l -0.03 -0.01 h -0.02 z " fill="black" />
                 </g>
                 <circle cx=0.16 r=0.014 stroke="black" fill="yellow" transform=sun_transform />
                 <circle cx=0.16 r=0.014 stroke="black" fill="lightgrey" transform=moon_transform />
@@ -155,9 +155,11 @@ impl CanvasArea {
                     None => None,
                 } 
             );
+        let rotation = format!("rotate({})", -self.positions.descendant());
         html! {
+            <>
+            <circle r="0.656" fill="white" />
             <g transform=format!("rotate({})", -self.start_of_zodiac)>
-                <circle r="0.656" fill="white" />
                 { for aspect_pairs.map(|(a, b, aspect)| {
                     let stroke = match aspect.aspect_type {
                         aspect::AspectType::Ninety | aspect::AspectType::OneEighty => "#aa0000",
@@ -168,7 +170,13 @@ impl CanvasArea {
                         <path d=chord_path(0.656, a, b) stroke=stroke stroke-width=width />
                     }
                 } ) }
+                <circle r="0.04" fill="#5555ff" stroke="black" />
+                <path d="M -0.04 0 A 0.04 0.04 0 0 0 0.04 0" fill="#0000aa" stroke="black" />
+                <path d="M -0.04 0 H 0.04" stroke="white" transform=rotation/>
             </g>
+            <path d="M -0.4 0 H 0.4" stroke="white" />
+            <circle r="0.012" fill="#black" stroke="#55ffff" />
+            </>
         }
     }
 }
