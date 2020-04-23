@@ -20,10 +20,3 @@ wasm-bindgen = "0.2.60"
 itertools = "0.9.0"
 lazy_static = "1.4.0"
 regex = "1.3.7"
-
-# The `console_error_panic_hook` crate provides better debugging of panics by
-# logging them with `console.error`. This is great for development, but requires
-# all the `std::fmt` and `std::panicking` infrastructure, so it's only enabled
-# in debug mode.
-[target."cfg(debug_assertions)".dependencies]
-console_error_panic_hook = "0.1.5"

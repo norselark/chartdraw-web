@@ -7,6 +7,7 @@ use crate::components::{
 
 pub struct App {
     link: ComponentLink<Self>,
+    aspect: bool,
     harmonic_cycle: HarmonicCycle,
     positions: Positions,
 }
@@ -40,6 +41,10 @@ impl Positions {
     pub fn planets(&self) -> &[f64] {
         &self.0[0..11]
     }
+
+    pub fn planets_without_node(&self) -> &[f64] {
+        &self.0[0..10]
+    }
 }
 
 #[derive(Clone, Debug, PartialEq)]
@@ -57,6 +62,7 @@ impl Default for HarmonicCycle {
 
 pub enum Msg {
     Noop,
+    ToggleAspect,
     CycleChange(u8),
     HarmonicChange(u16),
     NewPositions(Positions),
@@ -69,6 +75,7 @@ impl Component for App {
     fn create(_: Self::Properties, link: ComponentLink<Self>) -> Self {
         App {
             link,
+            aspect: false,
             harmonic_cycle: HarmonicCycle::default(),
             positions: Positions::default(),
         }
@@ -84,6 +91,7 @@ impl Component for App {
                 self.harmonic_cycle = HarmonicCycle::Harmonic(harmonic)
             }
             Msg::Noop => return false,
+            Msg::ToggleAspect => self.aspect = !self.aspect,
             Msg::NewPositions(positions) => self.positions = positions,
         }
         true
@@ -93,6 +101,7 @@ impl Component for App {
         let on_harmonic_change = self.link.callback(Msg::HarmonicChange);
         let on_cycle_change = self.link.callback(Msg::CycleChange);
         let on_positions_change = self.link.callback(Msg::NewPositions);
+        let on_aspect_toggle = self.link.callback(|_| Msg::ToggleAspect);
 
         let (harmonic, cycle) = match self.harmonic_cycle {
             HarmonicCycle::Base => (1, 1),
@@ -106,10 +115,14 @@ impl Component for App {
             <div class="app_container">
                 <div class="left_frame">
                     <TopBar />
-                    <CanvasArea harmonic_cycle=&self.harmonic_cycle positions=&drawing_positions />
+                    <CanvasArea harmonic_cycle=&self.harmonic_cycle positions=&drawing_positions aspect=self.aspect />
                     <BottomBar harmonic_cycle=&self.harmonic_cycle />
                 </div>
                 <div class="right_frame">
+                    <label>
+                        { "Show aspects:" }
+                        <input type="checkbox" checked=self.aspect onchange=on_aspect_toggle />
+                    </label>
                     <HarmonicSelect harmonic=harmonic on_change=on_harmonic_change />
                     <CycleSelect cycle=cycle on_change=on_cycle_change />
                     <ListView positions=&self.positions />

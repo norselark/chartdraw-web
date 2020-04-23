@@ -1,6 +1,8 @@
+use itertools::Itertools;
 use yew::prelude::*;
 
 use crate::app::{HarmonicCycle, Positions};
+use crate::aspect;
 use crate::optimize;
 
 const ZODIAC_GLYPHS: [char; 12] = [
@@ -13,12 +15,14 @@ pub struct CanvasArea {
     harmonic_cycle: HarmonicCycle,
     positions: Positions,
     start_of_zodiac: f64,
+    aspect: bool,
 }
 
 #[derive(Clone, PartialEq, Properties)]
 pub struct Props {
     pub harmonic_cycle: HarmonicCycle,
     pub positions: Positions,
+    pub aspect: bool,
 }
 
 impl Component for CanvasArea {
@@ -32,12 +36,14 @@ impl Component for CanvasArea {
             harmonic_cycle: props.harmonic_cycle,
             positions: props.positions,
             start_of_zodiac,
+            aspect: props.aspect,
         }
     }
 
     fn change(&mut self, props: Self::Properties) -> ShouldRender {
         self.harmonic_cycle = props.harmonic_cycle;
         self.positions = props.positions;
+        self.aspect = props.aspect;
         self.start_of_zodiac = (180. - self.positions.ascendant()) % 360.;
         true
     }
@@ -102,6 +108,13 @@ impl Component for CanvasArea {
                         </> }
                     }
                 }
+                {
+                    if self.aspect {
+                        self.aspects()
+                    } else {
+                        html! {}
+                    }
+                }
             </svg>
         }
     }
@@ -129,8 +142,33 @@ impl CanvasArea {
     }
 
     fn aspects(&self) -> Html {
+        let aspect_pairs = self
+            .positions
+            .planets_without_node()
+            .iter()
+            .tuple_combinations()
+            .filter_map(|(&a, &b)| 
+                match aspect::aspect(a, b, 8.0) {
+                    Some(asp) if matches!(asp.aspect_type, aspect::AspectType::Zero) => None,
+                    Some(asp) if matches!(asp.aspect_type, aspect::AspectType::Thirty) => None,
+                    Some(asp) => Some((a, b, asp)),
+                    None => None,
+                } 
+            );
         html! {
-            <circle r="0.656" fill="white" />
+            <g transform=format!("rotate({})", -self.start_of_zodiac)>
+                <circle r="0.656" fill="white" />
+                { for aspect_pairs.map(|(a, b, aspect)| {
+                    let stroke = match aspect.aspect_type {
+                        aspect::AspectType::Ninety | aspect::AspectType::OneEighty => "#aa0000",
+                        _ => "#00aa00",
+                    };
+                    let width = (0.003 * (1. + 2.2 * aspect.close)).to_string();
+                    html! {
+                        <path d=chord_path(0.656, a, b) stroke=stroke stroke-width=width />
+                    }
+                } ) }
+            </g>
         }
     }
 }
@@ -205,4 +243,12 @@ fn planet_markers(positions: &[f64], start_of_zodiac: f64) -> Html {
             } ) }
         </g>
     }
+}
+
+fn chord_path(radius: f64, start: f64, end: f64) -> String {
+    let x0 = radius * start.to_radians().cos();
+    let y0 = -radius * start.to_radians().sin();
+    let x1 = radius * end.to_radians().cos();
+    let y1 = -radius * end.to_radians().sin();
+    format!("M {} {} L {} {}", x0, y0, x1, y1)
 }

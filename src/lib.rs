@@ -14,6 +14,7 @@ mod app;
 mod components;
 mod input;
 mod optimize;
+mod aspect;
 
 use wasm_bindgen::prelude::wasm_bindgen;
 
