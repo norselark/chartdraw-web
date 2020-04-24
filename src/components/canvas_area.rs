@@ -164,7 +164,7 @@ impl CanvasArea {
                 Some(asp)
                     if matches!(
                         asp.aspect_type,
-                        aspect::AspectType::Zero | aspect::AspectType::Thirty
+                        aspect::Type::Zero | aspect::Type::Thirty
                     ) =>
                 {
                     None
@@ -184,7 +184,7 @@ impl CanvasArea {
             <g transform=format!("rotate({})", self.zodiac_start + self.cycle_offset)>
                 { for aspect_pairs.map(|(a, b, aspect)| {
                     let stroke = match aspect.aspect_type {
-                        aspect::AspectType::Ninety | aspect::AspectType::OneEighty => "#aa0000",
+                        aspect::Type::Ninety | aspect::Type::OneEighty => "#aa0000",
                         _ => "#00aa00",
                     };
                     let width = (0.003 * (1. + 2.2 * aspect.close)).to_string();

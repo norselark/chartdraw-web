@@ -53,7 +53,7 @@ impl Component for HarmonicSelect {
             <label>
                 { "Harmonic:" }
                 <input type="number" value=self.harmonic min=1 max=300
-                    onchange=self.link.callback(|cd| Msg(cd)) />
+                    onchange=self.link.callback(Msg) />
                 { match &self.error {
                     Some(err) => html! { <p class="error">{ err.to_string() }</p> },
                     None => html! {},
