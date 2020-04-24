@@ -1,17 +1,17 @@
 use itertools::Itertools;
 
 const OPTIMIZE_STEPS: usize = 30;
-const LEARN_RATE: f64 = 0.1;
-const DIST_WEIGHT: f64 = 0.3;
-const OVERLAP_WEIGHT: f64 = 1. - DIST_WEIGHT;
-const OVERLAP_DIST: f64 = 6.;
+const LEARN_RATE: f32 = 0.1;
+const DIST_WEIGHT: f32 = 0.3;
+const OVERLAP_WEIGHT: f32 = 1. - DIST_WEIGHT;
+const OVERLAP_DIST: f32 = 6.;
 
-fn dist(a: f64, b: f64) -> f64 {
+fn dist(a: f32, b: f32) -> f32 {
     let d = (a - b).abs();
     d.min(360. - d)
 }
 
-fn overlap_loss(angles: &[f64]) -> f64 {
+fn overlap_loss(angles: &[f32]) -> f32 {
     angles
         .iter()
         .tuple_combinations()
@@ -19,18 +19,18 @@ fn overlap_loss(angles: &[f64]) -> f64 {
         .sum()
 }
 
-fn deviation_loss(angles: &[f64], targets: &[f64]) -> f64 {
+fn deviation_loss(angles: &[f32], targets: &[f32]) -> f32 {
     assert!(angles.len() == targets.len());
     DIST_WEIGHT
         * targets
             .iter()
             .zip(angles.iter())
             .map(|(&target, &angle)| (target - angle).powi(2))
-            .sum::<f64>()
-        / (2 * angles.len()) as f64
+            .sum::<f32>()
+        / (2 * angles.len()) as f32
 }
 
-fn deviation_gradient(angle: f64, target: f64) -> f64 {
+fn deviation_gradient(angle: f32, target: f32) -> f32 {
     if is_sorted(angle, target) {
         -dist(angle, target)
     } else {
@@ -38,17 +38,17 @@ fn deviation_gradient(angle: f64, target: f64) -> f64 {
     }
 }
 
-fn is_sorted(a: f64, b: f64) -> bool {
-    ((b - a) % 360. - dist(a, b)).abs() < std::f64::EPSILON
+fn is_sorted(a: f32, b: f32) -> bool {
+    ((b - a) % 360. - dist(a, b)).abs() < std::f32::EPSILON
 }
 
 #[allow(unused)]
-fn total_loss(angles: &[f64], targets: &[f64]) -> f64 {
+fn total_loss(angles: &[f32], targets: &[f32]) -> f32 {
     assert!(angles.len() == targets.len());
     overlap_loss(angles) + deviation_loss(angles, targets)
 }
 
-pub fn optimize(angles: &[f64]) -> Vec<f64> {
+pub fn optimize(angles: &[f32]) -> Vec<f32> {
     let mut candidate = angles.to_vec();
     for _ in 0..OPTIMIZE_STEPS {
         let mut deltas = vec![0.; angles.len()];

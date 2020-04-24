@@ -1,6 +1,6 @@
 pub struct Aspect {
     pub aspect_type: Type,
-    pub close: f64,
+    pub close: f32,
 }
 
 pub enum Type {
@@ -13,12 +13,12 @@ pub enum Type {
 }
 
 impl Aspect {
-    fn new(aspect_type: Type, close: f64) -> Aspect {
+    fn new(aspect_type: Type, close: f32) -> Aspect {
         Self { aspect_type, close }
     }
 }
 
-pub fn aspect(a: f64, b: f64, orbis: f64) -> Option<Aspect> {
+pub fn aspect(a: f32, b: f32, orbis: f32) -> Option<Aspect> {
     let distance = (a - b).abs();
     let distance = distance.min(360. - distance);
     if distance < orbis {

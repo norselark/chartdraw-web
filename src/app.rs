@@ -13,7 +13,7 @@ pub struct App {
 }
 
 #[derive(Clone, Debug, PartialEq)]
-pub struct Positions(pub [f64; 13]);
+pub struct Positions(pub [f32; 13]);
 
 impl Default for Positions {
     fn default() -> Self {
@@ -22,27 +22,27 @@ impl Default for Positions {
 }
 
 impl Positions {
-    pub fn sun(&self) -> f64 {
+    pub fn sun(&self) -> f32 {
         self.0[0]
     }
 
-    pub fn moon(&self) -> f64 {
+    pub fn moon(&self) -> f32 {
         self.0[1]
     }
 
-    pub fn descendant(&self) -> f64 {
+    pub fn descendant(&self) -> f32 {
         self.0[11]
     }
 
-    pub fn ascendant(&self) -> f64 {
+    pub fn ascendant(&self) -> f32 {
         self.0[12]
     }
 
-    pub fn planets(&self) -> &[f64] {
+    pub fn planets(&self) -> &[f32] {
         &self.0[0..11]
     }
 
-    pub fn planets_without_node(&self) -> &[f64] {
+    pub fn planets_without_node(&self) -> &[f32] {
         &self.0[0..10]
     }
 }
@@ -141,9 +141,9 @@ pub fn try_from_change_data<T: FromStr>(cd: ChangeData) -> Result<T, T::Err> {
 }
 
 fn harmonics(positions: &Positions, harmonic: u16) -> Positions {
-    let mut new_positions: [f64; 13] = [0.; 13];
+    let mut new_positions: [f32; 13] = [0.; 13];
     for (i, pos) in positions.0.iter().enumerate() {
-        new_positions[i] = (pos * f64::from(harmonic)) % 360.
+        new_positions[i] = (pos * f32::from(harmonic)) % 360.
     }
     Positions(new_positions)
 }

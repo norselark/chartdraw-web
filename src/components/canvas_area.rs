@@ -10,13 +10,40 @@ const ZODIAC_GLYPHS: [char; 12] = [
 ];
 const PLANET_GLYPHS: [char; 11] = ['☉', '☽', '☿', '♀', '♂', '♃', '♄', '♅', '♆', '♇', '☊'];
 
+// Radii
+struct Radii {
+    outer_zodiac: f32,
+    inner_zodiac: f32,
+    outer_houses: f32,
+    inner_houses: f32,
+    aspects: f32,
+}
+
+impl Default for Radii {
+    fn default() -> Self {
+        let outer_zodiac = 104.3;
+        let inner_zodiac = 93.;
+        let outer_houses = 86.3;
+        let inner_houses = outer_houses - 16.;
+        let aspects = 65.6;
+        Self {
+            outer_zodiac,
+            inner_zodiac,
+            outer_houses,
+            inner_houses,
+            aspects
+        }
+    }
+}
+
 pub struct CanvasArea {
     // link: ComponentLink<Self>,
     harmonic_cycle: HarmonicCycle,
     positions: Positions,
-    zodiac_start: f64,
-    cycle_offset: f64,
+    zodiac_start: f32,
+    cycle_offset: f32,
     aspect: bool,
+    radii: Radii,
 }
 
 #[derive(Clone, PartialEq, Properties)]
@@ -34,7 +61,7 @@ impl Component for CanvasArea {
         let zodiac_start = (props.positions.ascendant() - 180.) % 360.;
         let cycle_offset = 30.
             * match props.harmonic_cycle {
-                HarmonicCycle::Cycle(n) => f64::from(n) - 1.,
+                HarmonicCycle::Cycle(n) => f32::from(n) - 1.,
                 _ => 0.,
             };
         Self {
@@ -44,12 +71,13 @@ impl Component for CanvasArea {
             zodiac_start,
             cycle_offset,
             aspect: props.aspect,
+            radii: Radii::default(),
         }
     }
 
     fn change(&mut self, props: Self::Properties) -> ShouldRender {
         self.cycle_offset = match props.harmonic_cycle {
-            HarmonicCycle::Cycle(n) => 30. * f64::from(n),
+            HarmonicCycle::Cycle(n) => 30. * f32::from(n),
             _ => 0.,
         };
         self.harmonic_cycle = props.harmonic_cycle;
@@ -70,8 +98,8 @@ impl Component for CanvasArea {
                 xmlns="http://www.w3.org/2000/svg"
                 viewBox="-100 -100 200 200"
             >
-                <circle r=86.3 stroke="white" fill="#55ffff" />
-                <circle r=70.3 stroke="white" fill="#5555ff" />
+                <circle r=self.radii.outer_houses stroke="white" fill="#55ffff" />
+                <circle r=self.radii.inner_houses stroke="white" fill="#5555ff" />
                 { house_sectors() }
                 // Blue semicircle under horizon
                 <g transform=format!("rotate({})", self.cycle_offset)>
@@ -83,10 +111,10 @@ impl Component for CanvasArea {
                     { self.zodiac_sectors() }
                     { self.planet_markers() }
                 </g>
-                <circle r=88.3 stroke="white" fill="transparent" />
+                <circle r=self.radii.outer_houses + 2. stroke="white" fill="transparent" />
                 <g stroke="#00aaaa" fill="transparent">
-                    <circle r=93.0 />
-                    <circle r=104.3 />
+                    <circle r=self.radii.outer_zodiac />
+                    <circle r=self.radii.inner_zodiac />
                 </g>
                 // Ascendant arrow
                 <g transform=format!("rotate({})", self.cycle_offset) stroke="white">
@@ -172,7 +200,7 @@ impl CanvasArea {
         let cycle_rot = format!("rotate({})", self.cycle_offset);
         html! {
             <>
-            <circle r=65.6 fill="white" />
+            <circle r=self.radii.aspects fill="white" />
             <g transform=format!("rotate({})", self.zodiac_start + self.cycle_offset)>
                 { for aspect_pairs.map(|(a, b, aspect)| {
                     let stroke = match aspect.aspect_type {
@@ -181,7 +209,7 @@ impl CanvasArea {
                     };
                     let width = 0.5 + 1.2 * aspect.close;
                     html! {
-                        <path d=chord_path(65.6, a, b) stroke=stroke stroke-width=width />
+                        <path d=chord_path(self.radii.aspects, a, b) stroke=stroke stroke-width=width />
                     }
                 } ) }
             </g>
@@ -197,7 +225,7 @@ impl CanvasArea {
     /// `start_of_zodiac` is passed in order to flip the glyphs right side up
     fn zodiac_sectors(&self) -> Html {
         let sector = |offset| {
-            let angle = (30 * offset) as f64;
+            let angle = (30 * offset) as f32;
             let rotation = format!("rotate({})", -angle);
             let text_trans = format!(
                 "rotate(-15) translate(98, 0) rotate({}) scale(0.8)",
@@ -270,7 +298,7 @@ fn five_deg_lines() -> Html {
     }
 }
 
-fn chord_path(radius: f64, start: f64, end: f64) -> String {
+fn chord_path(radius: f32, start: f32, end: f32) -> String {
     let x0 = radius * start.to_radians().cos();
     let y0 = -radius * start.to_radians().sin();
     let x1 = radius * end.to_radians().cos();

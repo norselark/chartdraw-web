@@ -91,7 +91,7 @@ impl Component for ListView {
 }
 
 impl ListView {
-    fn format_row(&self, name: &str, angle: f64) -> Html {
+    fn format_row(&self, name: &str, angle: f32) -> Html {
         let text = match self.angle_format {
             AngleFormat::Truncated => truncate_angle(angle),
             AngleFormat::Full => full_angle(angle),
@@ -105,10 +105,10 @@ impl ListView {
     }
 }
 
-fn truncate_angle(angle: f64) -> String {
+fn truncate_angle(angle: f32) -> String {
     assert!(angle >= 0.);
     let mut int_part = angle.floor();
-    let decimal_part: f64 = angle - int_part;
+    let decimal_part: f32 = angle - int_part;
     let zodiac_sign = ZODIAC_SIGNS[int_part as usize / 30];
     let mut i = (decimal_part * 60.).round();
     int_part %= 30.;
@@ -119,6 +119,6 @@ fn truncate_angle(angle: f64) -> String {
     format!("{:02}° {:02}' {}", int_part, i, zodiac_sign)
 }
 
-fn full_angle(angle: f64) -> String {
+fn full_angle(angle: f32) -> String {
     format!("{:.2}°", angle)
 }

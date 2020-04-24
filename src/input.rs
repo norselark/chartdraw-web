@@ -51,15 +51,15 @@ pub enum Error {
     UnknownZodiacSign(String),
 }
 
-fn to_num(ml: &MatchLine) -> Result<f64, Error> {
+fn to_num(ml: &MatchLine) -> Result<f32, Error> {
     let zodiac_idx = ZET9_ZODIAC
         .iter()
         .position(|&e| e == ml.sign)
-        .ok_or_else(|| Error::UnknownZodiacSign(ml.sign.to_string()))? as f64;
+        .ok_or_else(|| Error::UnknownZodiacSign(ml.sign.to_string()))? as f32;
     // These are matched as digit sequences and should always parse successfully
-    let deg: f64 = ml.degrees.parse().unwrap();
-    let min: f64 = ml.minutes.parse().unwrap();
-    let sec: f64 = ml.seconds.parse().unwrap();
+    let deg: f32 = ml.degrees.parse().unwrap();
+    let min: f32 = ml.minutes.parse().unwrap();
+    let sec: f32 = ml.seconds.parse().unwrap();
     Ok(30. * zodiac_idx + deg + (min / 60.) + (sec / 3600.))
 }
 
