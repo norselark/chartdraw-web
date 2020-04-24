@@ -33,15 +33,9 @@ impl Component for CycleSelect {
     fn update(&mut self, msg: Self::Message) -> ShouldRender {
         match msg {
             Msg(cd) => match try_from_change_data::<u8>(cd) {
-                Ok(mut v) => {
-                    if v < 1 {
-                        v += 12;
-                    }
-                    if v > 12 {
-                        v -= 12;
-                    }
+                Ok(v) => {
                     self.error = None;
-                    self.on_change.emit(v);
+                    self.on_change.emit((v + 11) % 12);
                 }
                 Err(detail) => self.error = detail.into(),
             },
@@ -58,7 +52,7 @@ impl Component for CycleSelect {
         html! {
             <label>
                 { "Turned axis:" }
-                <input type="number" value=self.cycle min=0 max=13
+                <input type="number" value=self.cycle + 1 min=0 max=13
                     onchange=self.link.callback(Msg) />
                 { match &self.error {
                     Some(err) => html! { <p class="error">{ err.to_string() }</p> },

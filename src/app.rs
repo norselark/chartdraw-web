@@ -83,7 +83,7 @@ impl Component for App {
 
     fn update(&mut self, msg: Self::Message) -> ShouldRender {
         match msg {
-            Msg::CycleChange(1) | Msg::HarmonicChange(1) => {
+            Msg::CycleChange(0) | Msg::HarmonicChange(1) => {
                 self.harmonic_cycle = HarmonicCycle::Base
             }
             Msg::CycleChange(cycle) => self.harmonic_cycle = HarmonicCycle::Cycle(cycle),
@@ -104,8 +104,8 @@ impl Component for App {
         let on_aspect_toggle = self.link.callback(|_| Msg::ToggleAspect);
 
         let (harmonic, cycle) = match self.harmonic_cycle {
-            HarmonicCycle::Base => (1, 1),
-            HarmonicCycle::Harmonic(harm) => (harm, 1),
+            HarmonicCycle::Base => (1, 0),
+            HarmonicCycle::Harmonic(harm) => (harm, 0),
             HarmonicCycle::Cycle(cycl) => (1, cycl),
         };
 

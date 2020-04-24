@@ -48,11 +48,10 @@ impl Component for CanvasArea {
     }
 
     fn change(&mut self, props: Self::Properties) -> ShouldRender {
-        self.cycle_offset = 30.
-            * match props.harmonic_cycle {
-                HarmonicCycle::Cycle(n) => f64::from(n) - 1.,
-                _ => 0.,
-            };
+        self.cycle_offset = match props.harmonic_cycle {
+            HarmonicCycle::Cycle(n) => 30. * f64::from(n),
+            _ => 0.,
+        };
         self.harmonic_cycle = props.harmonic_cycle;
         self.positions = props.positions;
         self.aspect = props.aspect;
@@ -68,19 +67,15 @@ impl Component for CanvasArea {
         html! {
             <svg
                 version="1.1" baseProfile="full"
-                width="512" height="512"
                 xmlns="http://www.w3.org/2000/svg"
-                viewBox="-1 -1 2 2" stroke-width="0.006"
-                text-anchor="middle" dominant-baseline="central"
-                font-size="12"
+                viewBox="-100 -100 200 200"
             >
-                <rect x="-1" y="-1" width="2" height="2" fill="black" />
-                <circle r="0.863" stroke="white" fill="#55ffff" />
-                <circle r="0.703" stroke="white" fill="#5555ff" />
+                <circle r=86.3 stroke="white" fill="#55ffff" />
+                <circle r=70.3 stroke="white" fill="#5555ff" />
                 { house_sectors() }
                 // Blue semicircle under horizon
                 <g transform=format!("rotate({})", self.cycle_offset)>
-                    <path d="M -0.703 0 A 0.703 0.703 0 0 0 0.703 0"
+                    <path d="M -70.3 0 A 70.3 70.3 0 0 0 70.3 0"
                         fill="#0000aa" stroke="white" />
                 </g>
                 <g transform=format!("rotate({})", self.zodiac_start + self.cycle_offset)>
@@ -88,16 +83,16 @@ impl Component for CanvasArea {
                     { self.zodiac_sectors() }
                     { self.planet_markers() }
                 </g>
-                <circle r="0.883" stroke="white" fill="transparent" />
+                <circle r=88.3 stroke="white" fill="transparent" />
                 <g stroke="#00aaaa" fill="transparent">
-                    <circle r="0.930" />
-                    <circle r="1.043" />
+                    <circle r=93.0 />
+                    <circle r=104.3 />
                 </g>
                 // Ascendant arrow
                 <g transform=format!("rotate({})", self.cycle_offset) stroke="white">
-                    <path d="M 0.703 0 H 0.219 M -0.219 0 H -0.703 M -0.863 0 H -0.9"
+                    <path d="M 70.3 0 H 21.9 M -21.9 0 H -70.3 M -86.3 0 H -9"
                         stroke="white" />
-                    <path d="M -0.9 0.01 h -0.02 l -0.03 -0.01 l 0.03 -0.01 h 0.02 z "
+                    <path d="M -9 1 h -2 l -3 -1 l 3 -1 h 2 z "
                         fill="white" />
                 </g>
                 // Descendant arrow
@@ -105,9 +100,9 @@ impl Component for CanvasArea {
                     "rotate({})",
                     self.zodiac_start - self.positions.descendant() + self.cycle_offset
                 ) stroke="white">
-                    <path d="M 0.703 0 H 0.219 M -0.219 0 H -0.703 M 0.863 0 H 0.9"
+                    <path d="M 70.3 0 H 21.9 M -21.9 0 H -70.3 M 86.3 0 H 9"
                         stroke="white" />
-                    <path d="M 0.9 0.01 h 0.02 l 0.03 -0.01 l -0.03 -0.01 h -0.02 z "
+                    <path d="M 9 1 h 2 l 3 -1 l -3 -1 h -2 z "
                         stroke="white" fill="black" />
                 </g>
                 // Centre disk
@@ -116,8 +111,8 @@ impl Component for CanvasArea {
                         self.mini_horizon()
                     } else {
                         html! { <>
-                            <circle r="0.219" stroke="black" fill="#55ffff" />
-                            <circle r="0.006" fill="black" />
+                            <circle r=21.9 stroke="black" fill="#55ffff" />
+                            <circle r=0.6 fill="black" />
                         </> }
                     }
                 }
@@ -139,17 +134,17 @@ impl CanvasArea {
         let moon_transform = format!("rotate({})", self.zodiac_start - self.positions.moon());
         html! {
             <>
-                <circle r="0.219" stroke="white" fill="#5555ff" />
-                <path d="M -0.219 0 A 0.219 0.219 0 0 0 0.219 0" fill="#0000aa" stroke="white" />
-                <path d="M -0.219 0 H 0.219 " stroke="white" />
-                <path d="M -0.219 0.01 h -0.02 l -0.03 -0.01 l 0.03 -0.01 h 0.02 z " stroke="white" fill="white" />
+                <circle r=21.9 stroke="white" fill="#5555ff" />
+                <path d="M -21.9 0 A 21.9 21.9 0 0 0 21.9 0" fill="#0000aa" stroke="white" />
+                <path d="M -21.9 0 H 21.9 " stroke="white" />
+                <path d="M -21.9 1 h -2 l -3 -1 l 3 -1 h 2 z " stroke="white" fill="white" />
                 <g transform=format!("rotate({})", self.zodiac_start - self.positions.descendant()) stroke="white">
-                    <path d="M -0.219 0 H 0.219 " />
-                    <path d="M 0.219 0.01 h 0.02 l 0.03 -0.01 l -0.03 -0.01 h -0.02 z " fill="black" />
+                    <path d="M -21.9 0 H 21.9 " />
+                    <path d="M 21.9 1 h 2 l 3 -1 l -3 -1 h -2 z " fill="black" />
                 </g>
-                <circle cx=0.16 r=0.014 stroke="black" fill="yellow" transform=sun_transform />
-                <circle cx=0.16 r=0.014 stroke="black" fill="lightgrey" transform=moon_transform />
-                <circle r="0.03" stroke="black" fill="#55ffff" />
+                <circle cx=16 r=1.4 stroke="black" fill="yellow" transform=sun_transform />
+                <circle cx=16 r=1.4 stroke="black" fill="lightgrey" transform=moon_transform />
+                <circle r=3 stroke="black" fill="#55ffff" />
             </>
         }
     }
@@ -162,10 +157,7 @@ impl CanvasArea {
             .tuple_combinations()
             .filter_map(|(&a, &b)| match aspect::aspect(a, b, 8.0) {
                 Some(asp)
-                    if matches!(
-                        asp.aspect_type,
-                        aspect::Type::Zero | aspect::Type::Thirty
-                    ) =>
+                    if matches!(asp.aspect_type, aspect::Type::Zero | aspect::Type::Thirty) =>
                 {
                     None
                 }
@@ -180,24 +172,24 @@ impl CanvasArea {
         let cycle_rot = format!("rotate({})", self.cycle_offset);
         html! {
             <>
-            <circle r="0.656" fill="white" />
+            <circle r=65.6 fill="white" />
             <g transform=format!("rotate({})", self.zodiac_start + self.cycle_offset)>
                 { for aspect_pairs.map(|(a, b, aspect)| {
                     let stroke = match aspect.aspect_type {
                         aspect::Type::Ninety | aspect::Type::OneEighty => "#aa0000",
                         _ => "#00aa00",
                     };
-                    let width = (0.003 * (1. + 2.2 * aspect.close)).to_string();
+                    let width = 0.5 + 1.2 * aspect.close;
                     html! {
-                        <path d=chord_path(0.656, a, b) stroke=stroke stroke-width=width />
+                        <path d=chord_path(65.6, a, b) stroke=stroke stroke-width=width />
                     }
                 } ) }
             </g>
-            <circle r="0.04" fill="#5555ff" stroke="black" />
-            <path d="M -0.04 0 A 0.04 0.04 0 0 0 0.04 0" fill="#0000aa" stroke="black" transform=cycle_rot />
-            <path d="M -0.04 0 H 0.04" stroke="white" transform=desc_rot />
-            <path d="M -0.04 0 H 0.04" stroke="white" transform=asc_rot />
-            <circle r="0.012" fill="#black" stroke="#55ffff" />
+            <circle r=4 fill="#5555ff" stroke="black" />
+            <path d="M -4 0 A 4 4 0 0 0 4 0" fill="#0000aa" stroke="black" transform=cycle_rot />
+            <path d="M -4 0 H 4" stroke="white" transform=desc_rot />
+            <path d="M -4 0 H 4" stroke="white" transform=asc_rot />
+            <circle r="1.2" fill="#black" stroke="#55ffff" />
             </>
         }
     }
@@ -208,13 +200,13 @@ impl CanvasArea {
             let angle = (30 * offset) as f64;
             let rotation = format!("rotate({})", -angle);
             let text_trans = format!(
-                "rotate(-15) translate(0.98, 0) rotate({}) scale(0.008)",
+                "rotate(-15) translate(98, 0) rotate({}) scale(0.8)",
                 angle + 15. - self.zodiac_start - self.cycle_offset
             );
             let glyph = ZODIAC_GLYPHS[offset];
             html! {
                 <g transform=rotation>
-                    <path d="M 0.930 0 L 1.043 0" stroke="#00aaaa" />
+                    <path d="M 93 0 H 104.3" stroke="#00aaaa" />
                     <text fill="#00aaaa" transform=text_trans>
                         { glyph }
                     </text>
@@ -233,14 +225,14 @@ impl CanvasArea {
                 { for self.positions.planets().iter().enumerate().map(|(i, a)| {
                     let delta = optimized_position[i] - a;
                     let text_trans = format!(
-                        "rotate({}) translate(0.775, 0) rotate({}) scale(0.008)",
+                        "rotate({}) translate(77.5, 0) rotate({}) scale(0.8)",
                         -delta,
                         a + delta - self.zodiac_start - self.cycle_offset);
                     let glyph = PLANET_GLYPHS[i];
                     html! {
-                        <g transform=format!("rotate({})", -a) stroke-width="0.005">
-                            <circle cx="0.684" r="0.012" stroke="white" fill="transparent" />
-                            <circle cx="0.902" r="0.015" fill="white" />
+                        <g transform=format!("rotate({})", -a) stroke-width="0.5">
+                            <circle cx="68.4" r="1.2" stroke="white" fill="transparent" />
+                            <circle cx="90.2" r="1.5" fill="white" />
                             <text fill="black" transform=text_trans>
                                 { glyph }
                             </text>
@@ -258,7 +250,7 @@ fn house_sectors() -> Html {
             {
                 for (0..12).map(|offset| {
                     let rotation = format!("rotate({})", 30 * offset);
-                    html!{<path d="M 0.703 0 L 0.863 0" transform=rotation />}
+                    html!{<path d="M 70.3 0 H 86.3" transform=rotation />}
                 })
             }
         </g>
@@ -271,7 +263,7 @@ fn five_deg_lines() -> Html {
             { for (0..72).map(|offset| {
                 let rotation = format!("rotate({})", 5 * offset);
                 html!{
-                    <path d="M 0.863 0 L 0.883 0" transform=rotation />
+                    <path d="M 86.3 0 H 88.3" transform=rotation />
                 }
             }) }
         </g>

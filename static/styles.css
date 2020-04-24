@@ -35,8 +35,12 @@ div {
     grid-column-end: 3;
 }
 
-canvas {
-    background-color: black;
+svg {
+    background: black;
+    stroke-width: 0.8;
+    font-size: 12px;
+    text-anchor: middle;
+    dominant-baseline: central;
 }
 
 .error {
