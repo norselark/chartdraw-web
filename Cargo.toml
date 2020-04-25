@@ -14,7 +14,7 @@ crate-type = ["cdylib"]
 lto = true
 
 [dependencies]
-yew = { version = "0.14.3", features = ["web_sys"] }
+yew = { version = "0.15.0", features = ["web_sys"] }
 web-sys = "0.3.37"
 wasm-bindgen = "0.2.60"
 itertools = "0.9.0"

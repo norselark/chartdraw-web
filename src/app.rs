@@ -22,26 +22,32 @@ impl Default for Positions {
 }
 
 impl Positions {
+    /// The position of the sun
     pub fn sun(&self) -> f32 {
         self.0[0]
     }
 
+    /// The position of the moon
     pub fn moon(&self) -> f32 {
         self.0[1]
     }
 
+    /// The position of the descendant
     pub fn descendant(&self) -> f32 {
         self.0[11]
     }
 
+    /// The position of the ascendant
     pub fn ascendant(&self) -> f32 {
         self.0[12]
     }
 
+    /// The position of the eleven planets, from the Sun up to and including the Node
     pub fn planets(&self) -> &[f32] {
         &self.0[0..11]
     }
 
+    /// The position of the ten planets, including Pluto but not Node
     pub fn planets_without_node(&self) -> &[f32] {
         &self.0[0..10]
     }
@@ -61,6 +67,7 @@ impl Default for HarmonicCycle {
 }
 
 pub enum Msg {
+    #[allow(unused)]
     Noop,
     ToggleAspect,
     CycleChange(u8),
@@ -79,6 +86,10 @@ impl Component for App {
             harmonic_cycle: HarmonicCycle::default(),
             positions: Positions::default(),
         }
+    }
+
+    fn change(&mut self, _props: Self::Properties) -> ShouldRender {
+        false
     }
 
     fn update(&mut self, msg: Self::Message) -> ShouldRender {

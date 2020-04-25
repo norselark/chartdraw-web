@@ -81,9 +81,9 @@ impl Component for ListView {
                     { for indices.map(|i| self.format_row(NAMES[i], pos_vec[i])) }
                 </table>
                 <div class="button_row">
-                    <button onclick=on_scrollup>{ "\u{25b2}" }</button>
+                    <button onclick=on_scrollup>{ '▲' }</button>
                     <button onclick=on_toggle >{ "Toggle" }</button>
-                    <button onclick=on_scrolldown>{ "\u{25bc}" }</button>
+                    <button onclick=on_scrolldown>{ '▼' }</button>
                 </div>
             </div>
         }
