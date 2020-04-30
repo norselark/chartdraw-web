@@ -82,8 +82,8 @@ impl Component for TextInput {
                     </div>
                 </form>
                 <div class="btn-group" role="group">
-                    <button class="btn" onclick=onclick>{ "Submit" }</button>
-                    <button class="btn" onclick=fill_default>{ "Insert sample" }</button>
+                    <button class="btn btn-primary" onclick=onclick>{ "Submit" }</button>
+                    <button class="btn btn-secondary" onclick=fill_default>{ "Insert sample" }</button>
                 </div>
             </div>
         }

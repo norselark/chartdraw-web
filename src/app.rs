@@ -133,9 +133,9 @@ impl Component for App {
                     <div class="col">
                         <form>
                             <div class="form-check">
-                                <input class="form-check-input" type="checkbox"
+                                <input id="aspect-toggle" class="form-check-input" type="checkbox"
                                     checked=self.aspect onchange=on_aspect_toggle />
-                                <label class="form-check-label">{ "Show aspects" }</label>
+                                <label for="aspect-toggle" class="form-check-label">{ "Show aspects" }</label>
                             </div>
                             <HarmonicSelect harmonic=harmonic on_change=on_harmonic_change />
                             <CycleSelect cycle=cycle on_change=on_cycle_change />

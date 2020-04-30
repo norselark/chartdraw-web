@@ -55,8 +55,8 @@ impl Component for CycleSelect {
         };
         html! {
             <div class="form-group">
-                <label>{ "Turned axis" }</label>
-                <input class="form-control" type="number" value=self.cycle + 1 min=0 max=13
+                <label for="cycle-select">{ "Turned axis" }</label>
+                <input id="cycle-select" class="form-control" type="number" value=self.cycle + 1 min=0 max=13
                     onchange=self.link.callback(Msg) />
                 { maybe_error }
             </div>

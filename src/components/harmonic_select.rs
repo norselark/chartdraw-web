@@ -55,8 +55,8 @@ impl Component for HarmonicSelect {
         };
         html! {
             <div class="form-group">
-                <label>{ "Harmonic:" }</label>
-                <input class="form-control" type="number" value=self.harmonic min=1 max=300
+                <label for="harmonic-select">{ "Harmonic:" }</label>
+                <input id="harmonic-select" class="form-control" type="number" value=self.harmonic min=1 max=300
                     onchange=self.link.callback(Msg) />
                 { maybe_error }
             </div>

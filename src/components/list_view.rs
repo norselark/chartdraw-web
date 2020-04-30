@@ -78,12 +78,15 @@ impl Component for ListView {
         html! {
             <div>
                 <table class="table table-sm table-hover">
-                    { for indices.map(|i| self.format_row(NAMES[i], pos_vec[i])) }
+                    <thead></thead>
+                    <tbody>
+                        { for indices.map(|i| self.format_row(NAMES[i], pos_vec[i])) }
+                    </tbody>
                 </table>
-                <div class="btn-group" role="group">
-                    <button class="btn" onclick=on_scrollup>{ '▲' }</button>
-                    <button class="btn" onclick=on_toggle >{ "Toggle" }</button>
-                    <button class="btn" onclick=on_scrolldown>{ '▼' }</button>
+                <div class="btn-group d-flex" role="group">
+                    <button class="btn btn-secondary w-50" onclick=on_scrollup>{ '▲' }</button>
+                    <button class="btn btn-secondary w-100" onclick=on_toggle >{ "Toggle" }</button>
+                    <button class="btn btn-secondary w-50" onclick=on_scrolldown>{ '▼' }</button>
                 </div>
             </div>
         }
