@@ -49,16 +49,17 @@ impl Component for CycleSelect {
     }
 
     fn view(&self) -> Html {
+        let maybe_error = match &self.error {
+            Some(err) => html! { <div class="alert alert-warning">{ err.to_string() }</div> },
+            None => html! {},
+        };
         html! {
-            <label>
-                { "Turned axis:" }
-                <input type="number" value=self.cycle + 1 min=0 max=13
+            <div class="form-group">
+                <label>{ "Turned axis" }</label>
+                <input class="form-control" type="number" value=self.cycle + 1 min=0 max=13
                     onchange=self.link.callback(Msg) />
-                { match &self.error {
-                    Some(err) => html! { <p class="error">{ err.to_string() }</p> },
-                    None => html! {},
-                } }
-            </label>
+                { maybe_error }
+            </div>
         }
     }
 }

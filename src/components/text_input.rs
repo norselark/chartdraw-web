@@ -60,23 +60,31 @@ impl Component for TextInput {
         let onclick = self.link.callback(|_| Msg::Clicked);
         let fill_default = self.link.callback(|_| Msg::FillDefault);
 
+        let label = html! {
+            <label>
+                { "Paste ZET9 output here and click submit. Click " }
+                <em>{ "Insert sample" }</em>
+                { " to see an example." }
+            </label>
+        };
+        let maybe_error = match &self.error {
+            Some(err) => html! { <div class="alert alert-warning">{ format!("{:?}", err) }</div> },
+            None => html! {},
+        };
+
         html! {
-            <div class="text-input">
-                <p>
-                    { "Paste ZET9 output here and click submit. Click " }
-                    <em>{ "Insert sample" }</em>
-                    { " to see an example." }
-                </p>
-                {
-                    if let Some(err) = &self.error {
-                        html! { <p class="error">{ format!("{:?}", err) }</p> }
-                    } else {
-                        html! {}
-                    }
-                }
-                <textarea rows=10 cols=60 value=self.text, oninput=on_text_input />
-                <button onclick=onclick>{ "Submit" }</button>
-                <button onclick=fill_default>{ "Insert sample" }</button>
+            <div>
+                <form>
+                    <div class="form-group">
+                        { label }
+                        { maybe_error }
+                        <textarea class="form-control text-monospace" rows=10 value=self.text, oninput=on_text_input />
+                    </div>
+                </form>
+                <div class="btn-group" role="group">
+                    <button class="btn" onclick=onclick>{ "Submit" }</button>
+                    <button class="btn" onclick=fill_default>{ "Insert sample" }</button>
+                </div>
             </div>
         }
     }

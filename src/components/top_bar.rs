@@ -30,7 +30,7 @@ impl Component for TopBar {
 
     fn view(&self) -> Html {
         html! {
-            <div class="top_bar">
+            <div class="row justify-content-between">
                 <div>{
                     for self.left_text.iter().map(|s| html! { s }).intersperse(html! { <br /> })
                 }</div>

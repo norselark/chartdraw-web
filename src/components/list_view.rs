@@ -76,14 +76,14 @@ impl Component for ListView {
         let indices = (self.offset..NUM).chain(0..self.offset);
         let pos_vec = self.positions.0.to_vec();
         html! {
-            <div class="listview">
-                <table>
+            <div>
+                <table class="table table-sm table-hover">
                     { for indices.map(|i| self.format_row(NAMES[i], pos_vec[i])) }
                 </table>
-                <div class="button_row">
-                    <button onclick=on_scrollup>{ '▲' }</button>
-                    <button onclick=on_toggle >{ "Toggle" }</button>
-                    <button onclick=on_scrolldown>{ '▼' }</button>
+                <div class="btn-group" role="group">
+                    <button class="btn" onclick=on_scrollup>{ '▲' }</button>
+                    <button class="btn" onclick=on_toggle >{ "Toggle" }</button>
+                    <button class="btn" onclick=on_scrolldown>{ '▼' }</button>
                 </div>
             </div>
         }

@@ -49,16 +49,17 @@ impl Component for HarmonicSelect {
     }
 
     fn view(&self) -> Html {
+        let maybe_error = match &self.error {
+            Some(err) => html! { <div class="alert alert-warning">{ err.to_string() }</div> },
+            None => html! {},
+        };
         html! {
-            <label>
-                { "Harmonic:" }
-                <input type="number" value=self.harmonic min=1 max=300
+            <div class="form-group">
+                <label>{ "Harmonic:" }</label>
+                <input class="form-control" type="number" value=self.harmonic min=1 max=300
                     onchange=self.link.callback(Msg) />
-                { match &self.error {
-                    Some(err) => html! { <p class="error">{ err.to_string() }</p> },
-                    None => html! {},
-                } }
-            </label>
+                { maybe_error }
+            </div>
         }
     }
 }

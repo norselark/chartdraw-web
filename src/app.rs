@@ -123,20 +123,25 @@ impl Component for App {
         let drawing_positions = harmonics(&self.positions, harmonic);
 
         html! {
-            <div class="app_container">
-                <div class="left_frame">
-                    <TopBar />
-                    <CanvasArea harmonic_cycle=&self.harmonic_cycle positions=&drawing_positions aspect=self.aspect />
-                    <BottomBar harmonic_cycle=&self.harmonic_cycle />
-                </div>
-                <div class="right_frame">
-                    <label>
-                        { "Show aspects:" }
-                        <input type="checkbox" checked=self.aspect onchange=on_aspect_toggle />
-                    </label>
-                    <HarmonicSelect harmonic=harmonic on_change=on_harmonic_change />
-                    <CycleSelect cycle=cycle on_change=on_cycle_change />
-                    <ListView positions=&self.positions />
+            <div class="container">
+                <div class="row">
+                    <div class="col-8">
+                        <TopBar />
+                        <CanvasArea harmonic_cycle=&self.harmonic_cycle positions=&drawing_positions aspect=self.aspect />
+                        <BottomBar harmonic_cycle=&self.harmonic_cycle />
+                    </div>
+                    <div class="col">
+                        <form>
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox"
+                                    checked=self.aspect onchange=on_aspect_toggle />
+                                <label class="form-check-label">{ "Show aspects" }</label>
+                            </div>
+                            <HarmonicSelect harmonic=harmonic on_change=on_harmonic_change />
+                            <CycleSelect cycle=cycle on_change=on_cycle_change />
+                        </form>
+                        <ListView positions=&self.positions />
+                    </div>
                 </div>
                 <TextInput on_change=on_positions_change />
             </div>

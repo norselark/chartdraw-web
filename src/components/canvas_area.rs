@@ -31,7 +31,7 @@ impl Default for Radii {
             inner_zodiac,
             outer_houses,
             inner_houses,
-            aspects
+            aspects,
         }
     }
 }
@@ -93,7 +93,7 @@ impl Component for CanvasArea {
 
     fn view(&self) -> Html {
         html! {
-            <svg
+            <svg class="img-fluid"
                 version="1.1" baseProfile="full"
                 xmlns="http://www.w3.org/2000/svg"
                 viewBox="-100 -100 200 200"
