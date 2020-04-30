@@ -12,18 +12,19 @@
 extern crate lazy_static;
 
 mod app;
+mod aspect;
 mod components;
 mod input;
 mod optimize;
-mod aspect;
 
-use wasm_bindgen::prelude::wasm_bindgen;
+use wasm_bindgen::prelude::*;
 
-#[cfg(feature = "wee_alloc")]
 #[global_allocator]
 static ALLOC: wee_alloc::WeeAlloc = wee_alloc::WeeAlloc::INIT;
 
-#[wasm_bindgen(start)]
-pub fn main_js() {
+#[wasm_bindgen]
+pub fn run() -> Result<(), JsValue> {
+    web_logger::init();
     yew::start_app::<app::App>();
+    Ok(())
 }

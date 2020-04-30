@@ -125,7 +125,7 @@ impl Component for App {
         html! {
             <div class="container">
                 <div class="row">
-                    <div class="col-8">
+                    <div class="col-md-8">
                         <TopBar />
                         <CanvasArea harmonic_cycle=&self.harmonic_cycle positions=&drawing_positions aspect=self.aspect />
                         <BottomBar harmonic_cycle=&self.harmonic_cycle />
