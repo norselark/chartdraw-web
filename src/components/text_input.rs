@@ -1,6 +1,8 @@
+use log::error;
+use yew::prelude::*;
+
 use crate::app::Positions;
 use crate::input;
-use yew::prelude::*;
 
 pub struct TextInput {
     link: ComponentLink<Self>,
@@ -42,7 +44,7 @@ impl Component for TextInput {
                     self.on_change.emit(positions);
                 }
                 Err(detail) => {
-                    web_sys::console::error_1(&format!("{:?}", detail).into());
+                    error!("{:?}", detail);
                     self.error = Some(detail);
                 }
             },
