@@ -1,5 +1,5 @@
-use super::IntegerInput;
 use yew::prelude::*;
+use super::IntegerInput;
 
 pub struct HarmonicSelect {
     _link: ComponentLink<Self>,
@@ -36,7 +36,7 @@ impl Component for HarmonicSelect {
     fn view(&self) -> Html {
         html! {
             <div class="form-group">
-                <label for="harmonic-select">{ "Harmonic:" }</label>
+                <label for="harmonic-select">{ "Harmonic" }</label>
                 <IntegerInput
                     id="harmonic-select"
                     value=self.props.harmonic

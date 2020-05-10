@@ -1,4 +1,5 @@
 use itertools::Itertools;
+use log::info;
 use yew::prelude::*;
 
 use super::drawing::HarmonicCycle;
@@ -39,19 +40,18 @@ impl Default for Radii {
 
 pub struct SvgChart {
     // link: ComponentLink<Self>,
-    harmonic_cycle: HarmonicCycle,
-    positions: Positions,
     zodiac_start: f32,
     cycle_offset: f32,
-    aspect: bool,
     radii: Radii,
+    props: Props,
 }
 
-#[derive(Clone, PartialEq, Properties)]
+#[derive(Clone, Debug, PartialEq, Properties)]
 pub struct Props {
     pub harmonic_cycle: HarmonicCycle,
     pub positions: Positions,
     pub aspect: bool,
+    pub planets: u16,
 }
 
 impl Component for SvgChart {
@@ -67,25 +67,26 @@ impl Component for SvgChart {
             };
         Self {
             // link,
-            harmonic_cycle: props.harmonic_cycle,
-            positions: props.positions,
             zodiac_start,
             cycle_offset,
-            aspect: props.aspect,
             radii: Radii::default(),
+            props,
         }
     }
 
     fn change(&mut self, props: Self::Properties) -> ShouldRender {
-        self.cycle_offset = match props.harmonic_cycle {
-            HarmonicCycle::Cycle(n) => 30. * f32::from(n),
-            _ => 0.,
-        };
-        self.harmonic_cycle = props.harmonic_cycle;
-        self.positions = props.positions;
-        self.aspect = props.aspect;
-        self.zodiac_start = (self.positions.ascendant() - 180.) % 360.;
-        true
+        if self.props == props {
+            false
+        } else {
+            info!("Updated SVG chart props: {:?}", props);
+            self.cycle_offset = match props.harmonic_cycle {
+                HarmonicCycle::Cycle(n) => 30. * f32::from(n),
+                _ => 0.,
+            };
+            self.zodiac_start = (props.positions.ascendant() - 180.) % 360.;
+            self.props = props;
+            true
+        }
     }
 
     fn update(&mut self, _msg: Self::Message) -> ShouldRender {
@@ -127,7 +128,7 @@ impl Component for SvgChart {
                 // Descendant arrow
                 <g transform=format!(
                     "rotate({})",
-                    self.zodiac_start - self.positions.descendant() + self.cycle_offset
+                    self.zodiac_start - self.props.positions.descendant() + self.cycle_offset
                 ) stroke="white">
                     <path d="M 70.3 0 H 21.9 M -21.9 0 H -70.3 M 86.3 0 h 4"
                         stroke="white" />
@@ -136,7 +137,7 @@ impl Component for SvgChart {
                 </g>
                 // Centre disk
                 {
-                    if let HarmonicCycle::Cycle(_) = self.harmonic_cycle {
+                    if let HarmonicCycle::Cycle(_) = self.props.harmonic_cycle {
                         self.mini_horizon()
                     } else {
                         html! { <>
@@ -146,7 +147,7 @@ impl Component for SvgChart {
                     }
                 }
                 {
-                    if self.aspect {
+                    if self.props.aspect {
                         self.aspects()
                     } else {
                         html! {}
@@ -159,8 +160,11 @@ impl Component for SvgChart {
 
 impl SvgChart {
     fn mini_horizon(&self) -> Html {
-        let sun_transform = format!("rotate({})", self.zodiac_start - self.positions.sun());
-        let moon_transform = format!("rotate({})", self.zodiac_start - self.positions.moon());
+        let sun_transform = format!("rotate({})", self.zodiac_start - self.props.positions.sun());
+        let moon_transform = format!(
+            "rotate({})",
+            self.zodiac_start - self.props.positions.moon()
+        );
         html! {
             <>
                 <circle r=21.9 stroke="white" fill="#5555ff" />
@@ -169,7 +173,7 @@ impl SvgChart {
                 <path d="M -21.9 1 h -2 l -3 -1 l 3 -1 h 2 z " stroke="white" fill="white" />
                 <g
                     transform=format!("rotate({})",
-                    self.zodiac_start - self.positions.descendant())
+                    self.zodiac_start - self.props.positions.descendant())
                     stroke="white"
                 >
                     <path d="M -21.9 0 H 21.9 " />
@@ -184,9 +188,11 @@ impl SvgChart {
 
     fn aspects(&self) -> Html {
         let aspect_pairs = self
+            .props
             .positions
             .planets_without_node()
             .iter()
+            .take(self.props.planets as usize + 2)
             .tuple_combinations()
             .filter_map(|(&a, &b)| match aspect::aspect(a, b, 8.0) {
                 Some(asp)
@@ -200,7 +206,7 @@ impl SvgChart {
         let asc_rot = format!("rotate({})", self.cycle_offset);
         let desc_rot = format!(
             "rotate({})",
-            self.zodiac_start - self.positions.descendant() + self.cycle_offset
+            self.zodiac_start - self.props.positions.descendant() + self.cycle_offset
         );
         let cycle_rot = format!("rotate({})", self.cycle_offset);
         html! {
@@ -258,10 +264,16 @@ impl SvgChart {
     }
 
     fn planet_markers(&self) -> Html {
-        let optimized_position = optimize::optimize(self.positions.planets());
+        let optimized_position = optimize::optimize(self.props.positions.planets());
+        let planets = self
+            .props
+            .positions
+            .planets()
+            .iter()
+            .take(self.props.planets as usize + 2);
         html! {
             <g>
-                { for self.positions.planets().iter().enumerate().map(|(i, a)| {
+                { for planets.enumerate().map(|(i, a)| {
                     let delta = optimized_position[i] - a;
                     let text_trans = format!(
                         "rotate({}) translate(77.5, 0) rotate({}) scale(0.8)",

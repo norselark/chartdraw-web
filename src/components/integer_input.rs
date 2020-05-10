@@ -65,8 +65,8 @@ impl Component for IntegerInput {
                 class="form-control"
                 type="number"
                 value=self.props.value
-                min=1
-                max=300
+                min=self.props.min
+                max=self.props.max
                 onchange=self.link.callback(Msg)
             />
             { maybe_error }

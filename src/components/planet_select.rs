@@ -41,7 +41,7 @@ impl Component for PlanetSelect {
     fn view(&self) -> Html {
         html! {
             <div class="form-group">
-                <label for="planet-select">{ "Number of planets:" }</label>
+                <label for="planet-select">{ "Number of planets" }</label>
                 <IntegerInput
                     id="planet-select"
                     value=self.props.planets

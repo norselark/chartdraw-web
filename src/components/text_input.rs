@@ -76,13 +76,16 @@ impl Component for TextInput {
 
         html! {
             <div>
-                <form>
-                    <div class="form-group">
-                        { label }
-                        { maybe_error }
-                        <textarea class="form-control text-monospace" rows=10 value=self.text, oninput=on_text_input />
-                    </div>
-                </form>
+                <div class="form-group">
+                    { label }
+                    { maybe_error }
+                    <textarea
+                        class="form-control text-monospace"
+                        rows=10
+                        value=self.text
+                        oninput=on_text_input
+                    />
+                </div>
                 <div class="btn-group" role="group">
                     <button class="btn btn-primary" onclick=onclick>{ "Submit" }</button>
                     <button class="btn btn-secondary" onclick=fill_default>{ "Insert sample" }</button>

@@ -23,6 +23,7 @@ pub enum Msg {
     CycleChange(u16),
     HarmonicChange(u16),
     PlanetsChange(u16),
+    Reset,
 }
 
 impl Component for Drawing {
@@ -51,6 +52,11 @@ impl Component for Drawing {
             Msg::Noop => return false,
             Msg::ToggleAspect => self.aspect = !self.aspect,
             Msg::PlanetsChange(planets) => self.planets = planets,
+            Msg::Reset => {
+                self.harmonic_cycle = HarmonicCycle::default();
+                self.aspect = false;
+                self.planets = 9;
+            }
         }
         true
     }
@@ -69,6 +75,7 @@ impl Component for Drawing {
         let on_cycle_change = self.link.callback(Msg::CycleChange);
         let on_aspect_toggle = self.link.callback(|_| Msg::ToggleAspect);
         let on_planets_change = self.link.callback(Msg::PlanetsChange);
+        let on_reset = self.link.callback(|_| Msg::Reset);
 
         let (harmonic, cycle) = match self.harmonic_cycle {
             HarmonicCycle::Base => (1, 0),
@@ -86,12 +93,13 @@ impl Component for Drawing {
                     harmonic_cycle=&self.harmonic_cycle
                     positions=&drawing_positions
                     aspect=self.aspect
+                    planets=self.planets
                 />
                 <BottomBar harmonic_cycle=&self.harmonic_cycle />
             </div>
             <div class="col">
                 <h4>{ "Drawing controls" }</h4>
-                <form>
+                <div>
                     <div class="form-check">
                         <input
                             id="aspect-toggle"
@@ -107,7 +115,10 @@ impl Component for Drawing {
                     <HarmonicSelect harmonic=harmonic on_change=on_harmonic_change />
                     <CycleSelect cycle=cycle on_change=on_cycle_change />
                     <PlanetSelect planets=self.planets on_change=on_planets_change />
-                </form>
+                    <button type="button" class="btn btn-secondary" onclick=on_reset>
+                        { "Reset" }
+                    </button>
+                </div>
             </div>
             </>
         }
