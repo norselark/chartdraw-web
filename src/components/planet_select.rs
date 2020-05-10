@@ -1,74 +1,54 @@
-use crate::app::try_from_change_data;
-use std::num::ParseIntError;
+use super::IntegerInput;
 use yew::prelude::*;
 
-const min_planets: u8 = 1;
-const max_planets: u8 = 9;
+const MIN_PLANETS: u16 = 1;
+const MAX_PLANETS: u16 = 9;
 
 pub struct PlanetSelect {
-    link: ComponentLink<Self>,
-    planets: u16,
-    on_change: Callback<u16>,
-    error: Option<ParseIntError>,
+    _link: ComponentLink<Self>,
+    props: Props,
 }
 
 #[derive(Clone, PartialEq, Properties)]
 pub struct Props {
-    pub planets: u8,
+    pub planets: u16,
     pub on_change: Callback<u16>,
 }
 
-pub struct Msg(ChangeData);
+pub struct Msg(u16);
 
 impl Component for PlanetSelect {
     type Message = Msg;
     type Properties = Props;
 
     fn create(props: Self::Properties, link: ComponentLink<Self>) -> Self {
-        Self {
-            link,
-            planets: props.planets,
-            on_change: props.on_change,
-            error: None,
-        }
+        Self { _link: link, props }
     }
 
-    fn update(&mut self, msg: Self::Message) -> ShouldRender {
-        match msg {
-            Msg(cd) => match try_from_change_data::<u16>(cd) {
-                Ok(v) => {
-                    self.error = None;
-                    self.on_change.emit(v);
-                }
-                Err(detail) => self.error = detail.into(),
-            },
-        };
-        true
+    fn update(&mut self, _msg: Self::Message) -> ShouldRender {
+        false
     }
 
     fn change(&mut self, props: Self::Properties) -> ShouldRender {
-        self.planets = props.planets;
-        true
+        if self.props != props {
+            self.props = props;
+            true
+        } else {
+            false
+        }
     }
 
     fn view(&self) -> Html {
-        let maybe_error = match &self.error {
-            Some(err) => html! { <div class="alert alert-warning">{ err.to_string() }</div> },
-            None => html! {},
-        };
         html! {
             <div class="form-group">
                 <label for="planet-select">{ "Number of planets:" }</label>
-                <input
+                <IntegerInput
                     id="planet-select"
-                    class="form-control"
-                    type="number"
-                    value=self.planets
-                    min=min_planets
-                    max=max_planets
-                    onchange=self.link.callback(Msg)
+                    value=self.props.planets
+                    min=MIN_PLANETS
+                    max=MAX_PLANETS
+                    on_change=self.props.on_change.clone()
                 />
-                { maybe_error }
             </div>
         }
     }

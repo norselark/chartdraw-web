@@ -2,13 +2,14 @@ use std::str::FromStr;
 use yew::prelude::*;
 
 use crate::components::{
-    BottomBar, CanvasArea, CycleSelect, HarmonicSelect, ListView, TextInput, TopBar,
+    BottomBar, CanvasArea, CycleSelect, HarmonicSelect, ListView, PlanetSelect, TextInput, TopBar,
 };
 
 pub struct App {
     link: ComponentLink<Self>,
     aspect: bool,
     harmonic_cycle: HarmonicCycle,
+    planets: u16,
     positions: Positions,
 }
 
@@ -56,7 +57,7 @@ impl Positions {
 #[derive(Clone, Debug, PartialEq)]
 pub enum HarmonicCycle {
     Base,
-    Cycle(u8),
+    Cycle(u16),
     Harmonic(u16),
 }
 
@@ -70,8 +71,9 @@ pub enum Msg {
     #[allow(unused)]
     Noop,
     ToggleAspect,
-    CycleChange(u8),
+    CycleChange(u16),
     HarmonicChange(u16),
+    PlanetsChange(u16),
     NewPositions(Positions),
 }
 
@@ -85,6 +87,7 @@ impl Component for App {
             aspect: false,
             harmonic_cycle: HarmonicCycle::default(),
             positions: Positions::default(),
+            planets: 9,
         }
     }
 
@@ -104,6 +107,7 @@ impl Component for App {
             Msg::Noop => return false,
             Msg::ToggleAspect => self.aspect = !self.aspect,
             Msg::NewPositions(positions) => self.positions = positions,
+            Msg::PlanetsChange(planets) => self.planets = planets,
         }
         true
     }
@@ -113,6 +117,7 @@ impl Component for App {
         let on_cycle_change = self.link.callback(Msg::CycleChange);
         let on_positions_change = self.link.callback(Msg::NewPositions);
         let on_aspect_toggle = self.link.callback(|_| Msg::ToggleAspect);
+        let on_planets_change = self.link.callback(Msg::PlanetsChange);
 
         let (harmonic, cycle) = match self.harmonic_cycle {
             HarmonicCycle::Base => (1, 0),
@@ -140,6 +145,7 @@ impl Component for App {
                             </div>
                             <HarmonicSelect harmonic=harmonic on_change=on_harmonic_change />
                             <CycleSelect cycle=cycle on_change=on_cycle_change />
+                            <PlanetSelect planets=self.planets on_change=on_planets_change />
                         </form>
                     </div>
                     <div class="col">

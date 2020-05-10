@@ -1,12 +1,9 @@
-use crate::app::try_from_change_data;
-use std::num::ParseIntError;
+use super::IntegerInput;
 use yew::prelude::*;
 
 pub struct HarmonicSelect {
-    link: ComponentLink<Self>,
-    harmonic: u16,
-    on_change: Callback<u16>,
-    error: Option<ParseIntError>,
+    _link: ComponentLink<Self>,
+    props: Props,
 }
 
 #[derive(Clone, PartialEq, Properties)]
@@ -15,50 +12,38 @@ pub struct Props {
     pub on_change: Callback<u16>,
 }
 
-pub struct Msg(ChangeData);
-
 impl Component for HarmonicSelect {
-    type Message = Msg;
+    type Message = ();
     type Properties = Props;
 
     fn create(props: Self::Properties, link: ComponentLink<Self>) -> Self {
-        Self {
-            link,
-            harmonic: props.harmonic,
-            on_change: props.on_change,
-            error: None,
-        }
+        Self { _link: link, props }
     }
 
-    fn update(&mut self, msg: Self::Message) -> ShouldRender {
-        match msg {
-            Msg(cd) => match try_from_change_data::<u16>(cd) {
-                Ok(v) => {
-                    self.error = None;
-                    self.on_change.emit(v);
-                }
-                Err(detail) => self.error = detail.into(),
-            },
-        };
-        true
+    fn update(&mut self, _msg: Self::Message) -> ShouldRender {
+        false
     }
 
     fn change(&mut self, props: Self::Properties) -> ShouldRender {
-        self.harmonic = props.harmonic;
-        true
+        if self.props != props {
+            self.props = props;
+            true
+        } else {
+            false
+        }
     }
 
     fn view(&self) -> Html {
-        let maybe_error = match &self.error {
-            Some(err) => html! { <div class="alert alert-warning">{ err.to_string() }</div> },
-            None => html! {},
-        };
         html! {
             <div class="form-group">
                 <label for="harmonic-select">{ "Harmonic:" }</label>
-                <input id="harmonic-select" class="form-control" type="number" value=self.harmonic min=1 max=300
-                    onchange=self.link.callback(Msg) />
-                { maybe_error }
+                <IntegerInput
+                    id="harmonic-select"
+                    value=self.props.harmonic
+                    min=1
+                    max=300
+                    on_change=self.props.on_change.clone()
+                />
             </div>
         }
     }
