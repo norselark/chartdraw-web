@@ -1,7 +1,7 @@
 use yew::prelude::*;
 
-use super::{SvgChart, PlanetSelect, HarmonicSelect, CycleSelect, TopBar, BottomBar};
-use crate::app::{Positions, harmonics};
+use super::{BottomBar, CycleSelect, HarmonicSelect, PlanetSelect, SvgChart, TopBar};
+use crate::app::{harmonics, Positions};
 
 pub struct Drawing {
     link: ComponentLink<Self>,

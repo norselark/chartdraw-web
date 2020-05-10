@@ -167,7 +167,11 @@ impl SvgChart {
                 <path d="M -21.9 0 A 21.9 21.9 0 0 0 21.9 0" fill="#0000aa" stroke="white" />
                 <path d="M -21.9 0 H 21.9 " stroke="white" />
                 <path d="M -21.9 1 h -2 l -3 -1 l 3 -1 h 2 z " stroke="white" fill="white" />
-                <g transform=format!("rotate({})", self.zodiac_start - self.positions.descendant()) stroke="white">
+                <g
+                    transform=format!("rotate({})",
+                    self.zodiac_start - self.positions.descendant())
+                    stroke="white"
+                >
                     <path d="M -21.9 0 H 21.9 " />
                     <path d="M 21.9 1 h 2 l 3 -1 l -3 -1 h -2 z " fill="black" />
                 </g>
@@ -203,16 +207,22 @@ impl SvgChart {
             <>
             <circle r=self.radii.aspects fill="white" />
             <g transform=format!("rotate({})", self.zodiac_start + self.cycle_offset)>
-                { for aspect_pairs.map(|(a, b, aspect)| {
-                    let stroke = match aspect.aspect_type {
-                        aspect::Type::Ninety | aspect::Type::OneEighty => "#aa0000",
-                        _ => "#00aa00",
-                    };
-                    let width = 0.5 + 1.2 * aspect.close;
-                    html! {
-                        <path d=chord_path(self.radii.aspects, a, b) stroke=stroke stroke-width=width />
-                    }
-                } ) }
+                {
+                    for aspect_pairs.map(|(a, b, aspect)| {
+                        let stroke = match aspect.aspect_type {
+                            aspect::Type::Ninety | aspect::Type::OneEighty => "#aa0000",
+                            _ => "#00aa00",
+                        };
+                        let width = 0.5 + 1.2 * aspect.close;
+                        html! {
+                            <path
+                                d=chord_path(self.radii.aspects, a, b)
+                                stroke=stroke
+                                stroke-width=width
+                            />
+                        }
+                    })
+                }
             </g>
             <circle r=4 fill="#5555ff" stroke="black" />
             <path d="M -4 0 A 4 4 0 0 0 4 0" fill="#0000aa" stroke="black" transform=cycle_rot />

@@ -1,10 +1,7 @@
 use std::str::FromStr;
 use yew::prelude::*;
 
-use crate::components::{
-    ListView, TextInput,
-    Drawing,
-};
+use crate::components::{Drawing, ListView, TextInput};
 
 pub struct App {
     link: ComponentLink<Self>,
@@ -51,7 +48,6 @@ impl Positions {
         &self.0[0..10]
     }
 }
-
 
 pub enum Msg {
     #[allow(unused)]

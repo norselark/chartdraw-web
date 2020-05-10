@@ -11,11 +11,11 @@ mod top_bar;
 
 pub use bottom_bar::BottomBar;
 pub use cycle_select::CycleSelect;
+pub use drawing::Drawing;
 pub use harmonic_select::HarmonicSelect;
 pub use integer_input::IntegerInput;
 pub use list_view::ListView;
 pub use planet_select::PlanetSelect;
 pub use svg_chart::SvgChart;
-pub use drawing::Drawing;
 pub use text_input::TextInput;
 pub use top_bar::TopBar;
