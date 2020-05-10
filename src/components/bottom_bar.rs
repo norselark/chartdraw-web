@@ -1,4 +1,4 @@
-use crate::app::HarmonicCycle;
+use super::drawing::HarmonicCycle;
 use itertools::Itertools;
 use yew::prelude::*;
 

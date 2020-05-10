@@ -1,7 +1,8 @@
 use itertools::Itertools;
 use yew::prelude::*;
 
-use crate::app::{HarmonicCycle, Positions};
+use super::drawing::HarmonicCycle;
+use crate::app::Positions;
 use crate::aspect;
 use crate::optimize;
 
@@ -36,7 +37,7 @@ impl Default for Radii {
     }
 }
 
-pub struct CanvasArea {
+pub struct SvgChart {
     // link: ComponentLink<Self>,
     harmonic_cycle: HarmonicCycle,
     positions: Positions,
@@ -53,7 +54,7 @@ pub struct Props {
     pub aspect: bool,
 }
 
-impl Component for CanvasArea {
+impl Component for SvgChart {
     type Message = ();
     type Properties = Props;
 
@@ -118,9 +119,9 @@ impl Component for CanvasArea {
                 </g>
                 // Ascendant arrow
                 <g transform=format!("rotate({})", self.cycle_offset) stroke="white">
-                    <path d="M 70.3 0 H 21.9 M -21.9 0 H -70.3 M -86.3 0 H -9"
+                    <path d="M 70.3 0 H 21.9 M -21.9 0 H -70.3 M -86.3 0 h -4"
                         stroke="white" />
-                    <path d="M -9 1 h -2 l -3 -1 l 3 -1 h 2 z "
+                    <path d="M -90 1 h -2 l -3 -1 l 3 -1 h 2 z "
                         fill="white" />
                 </g>
                 // Descendant arrow
@@ -128,9 +129,9 @@ impl Component for CanvasArea {
                     "rotate({})",
                     self.zodiac_start - self.positions.descendant() + self.cycle_offset
                 ) stroke="white">
-                    <path d="M 70.3 0 H 21.9 M -21.9 0 H -70.3 M 86.3 0 H 9"
+                    <path d="M 70.3 0 H 21.9 M -21.9 0 H -70.3 M 86.3 0 h 4"
                         stroke="white" />
-                    <path d="M 9 1 h 2 l 3 -1 l -3 -1 h -2 z "
+                    <path d="M 90 1 h 2 l 3 -1 l -3 -1 h -2 z "
                         stroke="white" fill="black" />
                 </g>
                 // Centre disk
@@ -156,7 +157,7 @@ impl Component for CanvasArea {
     }
 }
 
-impl CanvasArea {
+impl SvgChart {
     fn mini_horizon(&self) -> Html {
         let sun_transform = format!("rotate({})", self.zodiac_start - self.positions.sun());
         let moon_transform = format!("rotate({})", self.zodiac_start - self.positions.moon());
