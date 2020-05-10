@@ -125,12 +125,13 @@ impl Component for App {
         html! {
             <div class="container">
                 <div class="row">
-                    <div class="col-md-8">
+                    <div class="col-md-5">
                         <TopBar />
                         <CanvasArea harmonic_cycle=&self.harmonic_cycle positions=&drawing_positions aspect=self.aspect />
                         <BottomBar harmonic_cycle=&self.harmonic_cycle />
                     </div>
                     <div class="col">
+                        <h4>{ "Drawing controls" }</h4>
                         <form>
                             <div class="form-check">
                                 <input id="aspect-toggle" class="form-check-input" type="checkbox"
@@ -140,6 +141,9 @@ impl Component for App {
                             <HarmonicSelect harmonic=harmonic on_change=on_harmonic_change />
                             <CycleSelect cycle=cycle on_change=on_cycle_change />
                         </form>
+                    </div>
+                    <div class="col">
+                        <h4>{ "Numeric positions" }</h4>
                         <ListView positions=&self.positions />
                     </div>
                 </div>

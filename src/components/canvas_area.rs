@@ -96,7 +96,7 @@ impl Component for CanvasArea {
             <svg class="img-fluid"
                 version="1.1" baseProfile="full"
                 xmlns="http://www.w3.org/2000/svg"
-                viewBox="-100 -100 200 200"
+                viewBox="-105 -105 210 210"
             >
                 <circle r=self.radii.outer_houses stroke="white" fill="#55ffff" />
                 <circle r=self.radii.inner_houses stroke="white" fill="#5555ff" />

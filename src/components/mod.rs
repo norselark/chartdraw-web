@@ -1,4 +1,5 @@
 mod bottom_bar;
+mod planet_select;
 mod canvas_area;
 mod cycle_select;
 mod harmonic_select;
@@ -13,3 +14,4 @@ pub use harmonic_select::HarmonicSelect;
 pub use list_view::ListView;
 pub use text_input::TextInput;
 pub use top_bar::TopBar;
+pub use planet_select::HarmonicSelect as PlanetSelect;
