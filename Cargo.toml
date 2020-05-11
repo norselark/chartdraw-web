@@ -1,5 +1,5 @@
 [package]
-name = "yew-chartdraw"
+name = "chartdraw-web"
 version = "0.1.0"
 authors = ["Norselark <norselark@vivaldi.net>"]
 edition = "2018"
