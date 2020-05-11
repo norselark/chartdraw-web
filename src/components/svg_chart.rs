@@ -264,17 +264,20 @@ impl SvgChart {
     }
 
     fn planet_markers(&self) -> Html {
-        let optimized_position = optimize::optimize(self.props.positions.planets());
-        let planets = self
+        let limited_positions: Vec<f32> = self
             .props
             .positions
             .planets()
             .iter()
-            .take(self.props.planets as usize + 2);
+            .take(self.props.planets as usize + 2)
+            .copied()
+            .collect();
+        let optimized_positions = optimize::optimize(&limited_positions);
+        let planets = limited_positions.iter();
         html! {
             <g>
                 { for planets.enumerate().map(|(i, a)| {
-                    let delta = optimized_position[i] - a;
+                    let delta = optimized_positions[i] - a;
                     let text_trans = format!(
                         "rotate({}) translate(77.5, 0) rotate({}) scale(0.8)",
                         -delta,
